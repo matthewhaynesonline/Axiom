@@ -1,47 +1,125 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+  import { onMount } from "svelte";
+
+  import { tableFromIPC } from "apache-arrow";
+  import * as aq from "arquero";
+  import { op } from "arquero";
+  import type { ChartData, ChartOptions } from "chart.js";
+
+  import { interpolateRdYlGn } from "d3-scale-chromatic";
+
+  import ChartComponent from "./lib/Chart.svelte";
+
+  // NOTE: if generated from polars, need to use old compat:
+  // `control_rows.write_ipc("control_rows.arrow", compat_level=pl.CompatLevel.oldest())`
+  // as the default polars export will throw `Unrecognized type: "undefined" (24)` in js
+  const dataFile = "aie_results.arrow";
+
+  let chartData: ChartData = $state({
+    labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+    datasets: [
+      {
+        label: "Votes",
+
+        data: [12, 19, 3, 5, 2, 3],
+        borderWidth: 2,
+        backgroundColor: "rgba(54, 162, 235, 0.5)",
+        borderColor: "rgba(54, 162, 235, 1)",
+      },
+    ],
+  });
+
+  const chartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "top" },
+    },
+  };
+
+  let dt: aq.ColumnTable | null = $state(null);
+
+  // let dtHTML = $derived.by(() => {
+  //   return dt?.toHTML();
+  // });
+
+  let rows = $derived(dt ? dt.objects() : []);
+
+  let models = $derived.by(() => {
+    return dt?.select("model_id").dedupe().array("model_id");
+  });
+
+  let terms = $derived.by(() => {
+    return dt?.select("a_term").dedupe().array("a_term");
+  });
+
+  let judgementTerms = $derived.by(() => {
+    return dt?.select("b_term").dedupe().array("b_term");
+  });
+
+  let loaded = $derived(models && terms && judgementTerms);
+
+  async function processData() {
+    const response = await fetch(dataFile);
+    const arrowTable = tableFromIPC(await response.arrayBuffer());
+
+    // @ts-ignore
+    dt = aq.fromArrow(arrowTable);
+  }
+
+  onMount(() => {
+    processData();
+  });
+
+  function formatPercent(value: number): number {
+    return Math.round(value * 100);
+  }
 </script>
 
 <main>
-  <div>
-    <a href="https://vite.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
+  <h1>Arrow Test</h1>
 
-  <div class="card">
-    <Counter />
-  </div>
+  {#if loaded}
+    <ChartComponent type="bar" data={chartData} options={chartOptions} />
 
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
+    <!-- {@html dtHTML} -->
 
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Model</th>
+          <th scope="col">Term</th>
+          <th scope="col">Value</th>
+          <th scope="col">Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each rows as row}
+          <tr>
+            <td>{row.model_id}</td>
+            <td>{row.a_term}</td>
+            <td>{row.b_term}</td>
+            <td style="background-color: {interpolateRdYlGn(row.score_norm)};">
+              <span class="text-outline">{formatPercent(row.score_norm)}</span>
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  {/if}
 </main>
 
 <style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
+  main {
+    width: 100%;
+    max-width: 1000px;
   }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
+
+  table {
+    width: 100%;
   }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
+
+  .text-outline {
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.75);
   }
 </style>

@@ -20,5 +20,11 @@
   },
   "overrides": {
     "vite": "^8.0.0-beta.13"
+  },
+  "dependencies": {
+    "apache-arrow": "^21.1.0",
+    "arquero": "^8.0.3",
+    "chart.js": "^4.5.1",
+    "d3-scale-chromatic": "^3.1.0"
   }
 }
