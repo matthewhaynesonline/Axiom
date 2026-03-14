@@ -1,0 +1,25 @@
+{
+  "files": {
+    "modelsMeta": "enabled_models.csv",
+    "termPairs": "aie_term_pairs.arrow",
+    "termSentiment": "aie_term_sentiment.arrow"
+  },
+  "scale": {
+    "sentiment": {
+      "min": -0.5,
+      "max": 0.5
+    },
+    "offset": 0.5
+  },
+  "theme": {
+    "cssVars": {
+      "colors": {
+        "positive": "--color-positive",
+        "negative": "--color-negative",
+        "neutral": "--color-neutral",
+        "muted": "--color-muted",
+        "fallbackValue": "#000000"
+      }
+    }
+  }
+}

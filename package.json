@@ -10,21 +10,23 @@
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^6.2.1",
-    "@tsconfig/svelte": "^5.0.6",
-    "@types/node": "^24.10.1",
-    "svelte": "^5.45.2",
-    "svelte-check": "^4.3.4",
+    "@sveltejs/vite-plugin-svelte": "^6.2.4",
+    "@tsconfig/svelte": "^5.0.8",
+    "@types/node": "^25.4.0",
+    "svelte": "^5.53.10",
+    "svelte-check": "^4.4.5",
     "typescript": "~5.9.3",
-    "vite": "^8.0.0-beta.13"
+    "vite": "^8.0.0"
   },
   "overrides": {
-    "vite": "^8.0.0-beta.13"
+    "vite": "^8.0.0"
   },
   "dependencies": {
     "apache-arrow": "^21.1.0",
     "arquero": "^8.0.3",
-    "chart.js": "^4.5.1",
-    "d3-scale-chromatic": "^3.1.0"
+    "d3": "^7.9.0",
+    "d3-scale": "^4.0.2",
+    "d3-scale-chromatic": "^3.1.0",
+    "svelteplot": "^0.11.1"
   }
 }
