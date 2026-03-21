@@ -13,6 +13,7 @@
     "@sveltejs/vite-plugin-svelte": "^6.2.4",
     "@tsconfig/svelte": "^5.0.8",
     "@types/node": "^25.4.0",
+    "sass": "^1.98.0",
     "svelte": "^5.53.10",
     "svelte-check": "^4.4.5",
     "typescript": "~5.9.3",
@@ -24,6 +25,7 @@
   "dependencies": {
     "apache-arrow": "^21.1.0",
     "arquero": "^8.0.3",
+    "bootstrap": "^5.3.8",
     "d3": "^7.9.0",
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.1.0",
