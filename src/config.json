@@ -9,9 +9,12 @@
       "min": -0.5,
       "max": 0.5
     },
-    "offset": 0.5
+    "offset": 0.5,
+    "normalizedScaleScoreMax": 1.0
   },
   "theme": {
+    "numDecimalsDisplay": 2,
+    "headingCssClasses": "text-secondary-emphasis text-uppercase",
     "cssVars": {
       "colors": {
         "positive": "--color-positive",

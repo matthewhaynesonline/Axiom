@@ -12,7 +12,7 @@
     termCategory = null,
     judgementCategory = null,
   }: {
-    dt: aq.Table;
+    dt: aq.ColumnTable | null;
     termCategory?: string | null;
     judgementCategory?: string | null;
   } = $props();

@@ -1,30 +1,32 @@
 <script lang="ts">
+  import type { AppTabList, AppTab } from "../types";
+
   let {
-    tabs,
     activeTab = $bindable(),
+    tabs,
   }: {
-    tabs: string[];
-    activeTab: string;
+    activeTab: AppTab;
+    tabs: AppTabList;
   } = $props();
 
-  function changeActiveTab(newTab: string) {
-    activeTab = newTab;
+  function onTabClick(tab: AppTab): void {
+    activeTab = tab;
   }
 </script>
 
-<div>
-  <ul class="nav nav-tabs">
-    {#each tabs as tab}
-      <li class="nav-item">
-        <button
-          type="button"
-          class="nav-link"
-          class:active={tab === activeTab}
-          onclick={() => changeActiveTab(tab)}
-        >
-          {tab}
-        </button>
-      </li>
-    {/each}
-  </ul>
-</div>
+<ul class="nav nav-underline mb-2" role="tablist">
+  {#each tabs as tab}
+    <li class="nav-item" role="presentation">
+      <button
+        type="button"
+        class="nav-link"
+        class:active={tab === activeTab}
+        role="tab"
+        aria-selected={tab === activeTab}
+        onclick={() => onTabClick(tab)}
+      >
+        {tab}
+      </button>
+    </li>
+  {/each}
+</ul>

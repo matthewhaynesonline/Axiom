@@ -1,16 +1,22 @@
 <script lang="ts">
   import * as aq from "arquero";
 
-  import config from "../config.json";
-  import { createContinuousSentimentScale as createColorScale } from "./plot";
-  import { changeSort, formatPercent } from "./utils";
+  import type { TermSentiment } from "./types";
 
+  import { createContinuousSentimentScale as createColorScale } from "./plot";
+  import { changeSort } from "./utils";
+
+  import ScoreBar from "./ui/ScoreBar.svelte";
   import SortIcon from "./ui/SortIcon.svelte";
 
   let {
     dt,
+    termCategory = null,
+    judgementCategory = null,
   }: {
-    dt: aq.Table[];
+    dt?: aq.ColumnTable;
+    termCategory?: string | null;
+    judgementCategory?: string | null;
   } = $props();
 
   let colorScale = $state();
@@ -20,13 +26,13 @@
 
   let sortAqColumn = $derived(sortDesc ? aq.desc(sortColumn) : sortColumn);
   let sortedDt = $derived(dt?.orderby(sortAqColumn));
-  let rows = $derived(sortedDt?.objects() ?? []);
+  let rows = $derived(sortedDt?.objects() ?? []) as TermSentiment[];
 
   function doChangeSort(column: string) {
     [sortColumn, sortDesc] = changeSort(sortColumn, sortDesc, column);
   }
 
-  let loaded = $derived(!!colorScale);
+  let active = $derived(!!colorScale && !!termCategory && !!judgementCategory);
 
   $effect(() => {
     colorScale = createColorScale();
@@ -40,7 +46,7 @@
   </th>
 {/snippet}
 
-{#if loaded}
+{#if active}
   <table class="table table-striped table-hover">
     <thead>
       <tr>
@@ -58,16 +64,13 @@
           <td>{row.a_term}</td>
           <td>{row.positive_term}</td>
           <td>{row.negative_term}</td>
-          <td
-            class="text-center hover-group"
-            style="background-color: {colorScale(row.score_axis)};"
-          >
-            <span class="show-on-parent-hover">
-              {formatPercent(row.score_axis, config.scale.offset)}
-            </span>
+          <td>
+            <ScoreBar score={row.score_axis} />
           </td>
         </tr>
       {/each}
     </tbody>
   </table>
+{:else}
+  Please select a category and judgment category.
 {/if}

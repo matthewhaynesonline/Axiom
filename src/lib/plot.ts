@@ -31,12 +31,12 @@ export function createContinuousScale(
 }
 
 export function prepSentimentVsDisagreement(
-  dt: aq.Table,
+  dt: aq.ColumnTable,
   a_category: string,
   b_category: string,
   positive_term: string,
   negative_term: string,
-): aq.Table {
+): aq.ColumnTable {
   return (
     dt
       .params({

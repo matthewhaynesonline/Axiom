@@ -1,32 +1,36 @@
 <script lang="ts">
   import * as aq from "arquero";
 
+  import type { Model } from "./types";
+
   import config from "../config.json";
   import { createContinuousSentimentScale as createColorScale } from "./plot";
   import { changeSort, formatPercent } from "./utils";
 
   import SortIcon from "./ui/SortIcon.svelte";
+  import ScoreVal from "./ui/ScoreVal.svelte";
 
   let {
     dt,
     models,
-    termCategory,
-    judgementCategory = null,
+    selectedTermCategory,
+    selectedJudgementTermsCategory = null,
     avg_score_column = "avg_score",
   }: {
-    dt: aq.Table[];
-    models: string[];
-    termCategory: string;
-    judgementCategory?: string | null;
-    avg_score_column: string;
+    dt?: aq.ColumnTable;
+    models: Model[] | null;
+    selectedTermCategory: string | null;
+    selectedJudgementTermsCategory?: string | null;
+    avg_score_column?: string;
   } = $props();
 
   let colorScale = $state();
 
-  // Use fn to init state so svelte doesn't complain
   // we just want to default the sort based on prop
   // not update sort if prop changes (prop shouldn't change)
-  let sortColumn = $state(() => avg_score_column);
+  const initialSort = avg_score_column;
+  let sortColumn = $state(initialSort);
+
   let sortDesc = $state(true);
 
   let sortAqColumn = $derived(sortDesc ? aq.desc(sortColumn) : sortColumn);
@@ -34,17 +38,17 @@
   let rows = $derived(sortedDt?.objects() ?? []);
 
   let positiveTerm = $derived.by(() => {
-    if (!judgementCategory) return null;
+    if (!selectedJudgementTermsCategory) return null;
     return rows[0].positive_term;
   });
 
   let negativeTerm = $derived.by(() => {
-    if (!judgementCategory) return null;
+    if (!selectedJudgementTermsCategory) return null;
     return rows[0].negative_term;
   });
 
   let title = $derived.by(() => {
-    let title = termCategory ? termCategory : "All";
+    let title = selectedTermCategory ? selectedTermCategory : "All";
     if (positiveTerm && negativeTerm) {
       title += ` ("${positiveTerm}" vs "${negativeTerm}")`;
     }
@@ -52,6 +56,8 @@
   });
 
   let loaded = $derived(!!colorScale);
+
+  // let dtHTML = $derived(dt.toHTML());
 
   $effect(() => {
     colorScale = createColorScale();
@@ -65,54 +71,57 @@
 {#snippet sortHeader(columnId: string, label: string, extraClass: string = "")}
   <th
     scope="col"
-    class="cursor-pointer {extraClass}"
+    class="cursor-pointer {config.theme.headingCssClasses} {extraClass}"
     onclick={() => doChangeSort(columnId)}
   >
-    {label}
-    <SortIcon active={sortColumn === columnId} {sortDesc} />
+    <div>
+      {label}
+      <SortIcon active={sortColumn === columnId} {sortDesc} />
+    </div>
   </th>
 {/snippet}
 
-<h3>{title}</h3>
+<h5 class="border-start border-4 border-primary my-4 ps-2">
+  {title}
+</h5>
+
 {#if loaded}
-  <table class="table table-hover table-borderless">
+  <!-- {@html dtHTML} -->
+  <table class="table table-hover">
     <thead>
       <tr class="text-wrap text-break">
         {@render sortHeader("a_term", "Term", "text-end pe-2")}
         {#each models as model}
-          {@render sortHeader(model, model)}
+          {@render sortHeader(model.model_id, model.model_name, "angled")}
         {/each}
         {@render sortHeader(avg_score_column, "Average")}
       </tr>
     </thead>
     <tbody>
       {#each rows as row}
-        <tr>
+        <tr class="align-middle">
           <td class="text-end pe-2">
             {row.a_term}
-            {#if !judgementCategory && row.positive_term && row.negative_term}
+            {#if !selectedJudgementTermsCategory && row.positive_term && row.negative_term}
               ({row.positive_term} vs {row.negative_term})
             {/if}
           </td>
 
           {#each models as model}
-            <td
-              class="text-center hover-group"
-              style="background-color: {colorScale(row[model])};"
-            >
-              <span class="show-on-parent-hover">
-                {formatPercent(row[model], config.scale.offset)}
-              </span>
+            <td class="text-center hover-group p-1">
+              <div
+                class="rounded"
+                style="background-color: {colorScale(row[model.model_id])};"
+              >
+                <span class="show-on-parent-hover">
+                  {formatPercent(row[model.model_id], config.scale.offset)}
+                </span>
+              </div>
             </td>
           {/each}
 
-          <td
-            class="text-center hover-group"
-            style="background-color: {colorScale(row[avg_score_column])};"
-          >
-            <span class="show-on-parent-hover">
-              {formatPercent(row[avg_score_column], config.scale.offset)}
-            </span>
+          <td>
+            <ScoreVal score={row[avg_score_column]} />
           </td>
         </tr>
       {/each}
@@ -124,5 +133,17 @@
   table {
     border-spacing: 0;
     table-layout: fixed;
+  }
+
+  th.angled {
+    height: 160px;
+    vertical-align: bottom;
+  }
+
+  th.angled > div {
+    transform: rotate(-45deg);
+    transform-origin: left bottom;
+    width: 55px;
+    white-space: nowrap;
   }
 </style>

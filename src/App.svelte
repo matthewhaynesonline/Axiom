@@ -1,27 +1,31 @@
 <script lang="ts">
   import { onMount } from "svelte";
-
   import * as aq from "arquero";
+
+  import type { AppTabList, AppTab, Model } from "./lib/types";
 
   import config from "./config.json";
   import { loadDtFromArrow } from "./lib/utils";
 
   import Filters from "./lib/ui/Filters.svelte";
-  import ModelsList from "./lib/ModelsList.svelte";
+  import ModelsList from "./lib/models/ModelsList.svelte";
   import SentimentConsensus from "./lib/sentiment_plot/SentimentConsensus.svelte";
   import Tabs from "./lib/ui/Tabs.svelte";
+  import ThemeSelector from "./lib/ui/ThemeSelector.svelte";
   import TermsList from "./lib/TermsList.svelte";
   import TermsHeatmap from "./lib/TermsHeatmap.svelte";
 
-  const tabs = [
+  const tabs: AppTabList = [
     "Term Sentiment",
     "Sentiment Consensus",
     "Term Details",
     "Models",
   ];
 
-  let activeTab = $state(tabs[0]);
-  let showCompositeGroups = $state(true);
+  let filtersExpanded = $state(true);
+
+  let activeTab: AppTab = $state("Term Sentiment");
+  let showCompositeGroups: boolean = $state(true);
 
   let modelsMeta: aq.ColumnTable | null = $state(null);
   // let termPairsDt: aq.ColumnTable | null = $state(null);
@@ -81,31 +85,61 @@
   });
 
   let models = $derived.by(() => {
+    if (!activeTermSentimentDt || !modelsMeta) return null;
+
     return activeTermSentimentDt
-      ?.select("model_id")
+      .select("model_id")
       .dedupe()
-      .array("model_id")
-      .sort();
+      .join_left(
+        modelsMeta.derive({ model_id: (d: any) => aq.op.lower(d.model_id) }),
+        "model_id",
+      )
+      .derive({
+        model_name: (d: any) => d.model_name ?? d.model_id,
+      })
+      .derive({
+        group: (d: any) => d.group ?? "composite",
+      })
+      .orderby("group", "model_id")
+      .objects() as Model[];
   });
 
-  let selectedModel = $state(null);
+  let rawSelectedModels: Model[] = $state([]);
 
-  let termCategories = $derived.by(() => {
+  let selectedModels: Model[] = $derived.by(() => {
+    if (showCompositeGroups) {
+      return rawSelectedModels;
+    }
+
+    return rawSelectedModels.filter(
+      (m) => !m.model_id.startsWith("composite_"),
+    );
+  });
+
+  let selectedModelIds: string[] = $derived(
+    selectedModels.map((m) => m.model_id),
+  );
+
+  let selectedModelsEmpty: boolean = $derived(
+    !Array.isArray(selectedModels) || selectedModels.length === 0,
+  );
+
+  let termCategories: string[] = $derived.by(() => {
     return activeTermSentimentDt
       ?.select("a_category")
       .dedupe()
       .array("a_category")
-      .sort();
+      .sort() as string[];
   });
 
   let selectedTermCategory = $state(null);
 
-  let judgementTermsCategories = $derived.by(() => {
+  let judgementTermsCategories: string[] = $derived.by(() => {
     return activeTermSentimentDt
       ?.select("b_category")
       .dedupe()
       .array("b_category")
-      .sort();
+      .sort() as string[];
   });
 
   let selectedJudgementTermsCategory = $state(null);
@@ -114,7 +148,7 @@
     return activeTermSentimentDt?.filter(
       aq.escape(
         (d) =>
-          (selectedModel === null || d.model_id === selectedModel) &&
+          (selectedModelsEmpty || selectedModelIds.includes(d.model_id)) &&
           (selectedTermCategory === null ||
             d.a_category === selectedTermCategory) &&
           (selectedJudgementTermsCategory === null ||
@@ -124,27 +158,63 @@
   });
 
   let filteredTermSentimentDtPivot = $derived.by(() => {
-    return termSentimentDtPivot?.filter(
+    const baseFiltered = termSentimentDtPivot?.filter(
       aq.escape(
         (d) =>
-          // (selectedModel === null || d.model_id === selectedModel) &&
           (selectedTermCategory === null ||
             d.a_category === selectedTermCategory) &&
           (selectedJudgementTermsCategory === null ||
             d.b_category === selectedJudgementTermsCategory),
       ),
     );
+
+    if (selectedModelsEmpty || !baseFiltered) return baseFiltered;
+
+    // After pivot, models are columns — select non-model cols + only selected model cols
+    const nonModelCols = [
+      "a_term",
+      "a_category",
+      "b_category",
+      "positive_term",
+      "negative_term",
+      "avg_score",
+    ];
+
+    const allCols = baseFiltered.columnNames();
+    const modelCols = allCols.filter((col) => !nonModelCols.includes(col));
+    const keepModelCols = modelCols.filter((col) =>
+      selectedModelIds.includes(col),
+    );
+
+    return baseFiltered.select([...nonModelCols, ...keepModelCols]);
   });
 
   onMount(async () => {
     await Promise.all([loadModelsMeta(), processData()]);
+
+    if (models) {
+      rawSelectedModels = [...models];
+    }
   });
 
   async function loadModelsMeta() {
     const response = await fetch(config.files.modelsMeta);
     const csvText = await response.text();
 
-    modelsMeta = aq.fromCSV(csvText);
+    modelsMeta = aq
+      .fromCSV(csvText)
+      .derive({
+        license_score: (d: any) => aq.op.parse_float(d.license_score),
+      })
+      .select(
+        "model_id",
+        "model_name",
+        "type",
+        "group",
+        "model_url",
+        "license",
+        "license_score",
+      );
   }
 
   async function processData() {
@@ -154,62 +224,74 @@
 </script>
 
 <main>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col">
-        <h1>Arrow Test</h1>
-
-        {#if loaded}
-          <Tabs {tabs} bind:activeTab />
-
-          {#if activeTab === tabs[0]}
-            <Filters
-              {termCategories}
-              bind:selectedTermCategory
-              {judgementTermsCategories}
-              bind:selectedJudgementTermsCategory
-              bind:showCompositeGroups
-            />
-
-            <TermsHeatmap
-              dt={filteredTermSentimentDtPivot}
-              {models}
-              termCategory={selectedTermCategory}
-              judgementCategory={selectedJudgementTermsCategory}
-            />
-          {:else if activeTab === tabs[1]}
-            <Filters
-              {termCategories}
-              bind:selectedTermCategory
-              {judgementTermsCategories}
-              bind:selectedJudgementTermsCategory
-              bind:showCompositeGroups
-            />
-
-            <SentimentConsensus
-              dt={activeTermSentimentDt}
-              termCategory={selectedTermCategory}
-              judgementCategory={selectedJudgementTermsCategory}
-            />
-          {:else if activeTab === tabs[2]}
-            <Filters
-              {models}
-              bind:selectedModel
-              {termCategories}
-              bind:selectedTermCategory
-              {judgementTermsCategories}
-              bind:selectedJudgementTermsCategory
-              bind:showCompositeGroups
-            />
-
-            <TermsList dt={filteredTermSentimentDt} />
-          {:else if activeTab === tabs[3]}
-            <ModelsList dt={modelsMeta} />
-          {:else}
-            This is unexpected, a tab should be loaded. Whoops?
-          {/if}
-        {/if}
+  <nav class="navbar bg-body-tertiary">
+    <div class="container-fluid">
+      <span class="navbar-brand mb-0 h1">Data Explorer</span>
+      <div class="d-flex">
+        <ThemeSelector />
       </div>
     </div>
+  </nav>
+
+  <div class="container-fluid pt-4">
+    {#if loaded}
+      <Tabs {tabs} bind:activeTab />
+
+      {#if activeTab === "Term Sentiment"}
+        <Filters
+          bind:expanded={filtersExpanded}
+          {models}
+          bind:selectedModels={rawSelectedModels}
+          {termCategories}
+          bind:selectedTermCategory
+          {judgementTermsCategories}
+          bind:selectedJudgementTermsCategory
+          bind:showCompositeGroups
+        />
+
+        <TermsHeatmap
+          dt={filteredTermSentimentDtPivot}
+          models={selectedModels}
+          {selectedTermCategory}
+          {selectedJudgementTermsCategory}
+        />
+      {:else if activeTab === "Sentiment Consensus"}
+        <Filters
+          bind:expanded={filtersExpanded}
+          {termCategories}
+          bind:selectedTermCategory
+          {judgementTermsCategories}
+          bind:selectedJudgementTermsCategory
+          bind:showCompositeGroups
+        />
+
+        <SentimentConsensus
+          dt={activeTermSentimentDt}
+          termCategory={selectedTermCategory}
+          judgementCategory={selectedJudgementTermsCategory}
+        />
+      {:else if activeTab === "Term Details"}
+        <Filters
+          bind:expanded={filtersExpanded}
+          {models}
+          bind:selectedModels={rawSelectedModels}
+          {termCategories}
+          bind:selectedTermCategory
+          {judgementTermsCategories}
+          bind:selectedJudgementTermsCategory
+          bind:showCompositeGroups
+        />
+
+        <TermsList
+          dt={filteredTermSentimentDt}
+          termCategory={selectedTermCategory}
+          judgementCategory={selectedJudgementTermsCategory}
+        />
+      {:else if activeTab === "Models"}
+        <ModelsList dt={modelsMeta} />
+      {:else}
+        This is unexpected, a tab should be loaded. Whoops?
+      {/if}
+    {/if}
   </div>
 </main>

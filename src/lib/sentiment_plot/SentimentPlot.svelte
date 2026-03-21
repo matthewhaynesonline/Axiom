@@ -24,7 +24,7 @@
   // const labelThreshold = 0.0;
   const plotPadding = 0.05;
   const defaultHeight = 800;
-  const plotHeightPercentOfWindow = 0.75;
+  const plotHeightPercentOfWindow = 0.65;
 
   const theme = {
     animation: {
@@ -59,7 +59,7 @@
     positiveTerm = "good",
     negativeTerm = "evil",
   }: {
-    dt: aq.Table;
+    dt: aq.ColumnTable;
     positiveTerm: string;
     negativeTerm: string;
   } = $props();

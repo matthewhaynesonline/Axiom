@@ -20,3 +20,7 @@
 .hover-group:focus-within > .show-on-parent-hover {
   opacity: 1;
 }
+
+[data-bs-theme="light"] .btn.bg-body {
+  color: black;
+}
