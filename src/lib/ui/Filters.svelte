@@ -1,6 +1,4 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
-
   import type { Model } from "../types";
 
   import config from "../../config.json";
@@ -19,8 +17,6 @@
     judgementTermsCategories,
     selectedJudgementTermsCategory = $bindable(),
     showCompositeGroups = $bindable(),
-    children,
-    onResetCallback = () => {},
   }: {
     expanded: boolean;
     models?: Model[] | null;
@@ -30,8 +26,6 @@
     judgementTermsCategories: string[];
     selectedJudgementTermsCategory: string | null;
     showCompositeGroups: boolean;
-    children?: Snippet;
-    onResetCallback?: () => void;
   } = $props();
 
   function toggleExpanded(): void {
@@ -128,15 +122,9 @@
                 </select>
               </div>
             {/if}
-
-            {#if children}
-              <div class="col">
-                {@render children()}
-              </div>
-            {/if}
           </div>
 
-          <div class="row mt-3">
+          <div class="row align-items-end mt-3">
             {#if models || termCategories || judgementTermsCategories}
               <div class="col">
                 <button
@@ -202,8 +190,9 @@
             Filters
           </span>
 
-          <span class="badge rounded-pill text-bg-secondary ms-2">Category</span
-          >
+          <span class="badge rounded-pill text-bg-secondary ms-2">
+            Category
+          </span>
 
           <span class="badge rounded-pill text-bg-secondary ms-2">
             Judgement Criteria

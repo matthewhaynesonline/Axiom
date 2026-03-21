@@ -3,11 +3,10 @@
 
   import type { TermSentiment } from "./types";
 
+  import config from "../config.json";
   import { createContinuousSentimentScale as createColorScale } from "./plot";
-  import { changeSort } from "./utils";
 
   import ScoreBar from "./ui/ScoreBar.svelte";
-  import SortIcon from "./ui/SortIcon.svelte";
 
   let {
     dt,
@@ -19,6 +18,10 @@
     judgementCategory?: string | null;
   } = $props();
 
+  type groupByOption = "term" | "model";
+
+  let groupBy: groupByOption = $state("term");
+
   let colorScale = $state();
 
   let sortColumn = $state("model_id");
@@ -28,9 +31,31 @@
   let sortedDt = $derived(dt?.orderby(sortAqColumn));
   let rows = $derived(sortedDt?.objects() ?? []) as TermSentiment[];
 
-  function doChangeSort(column: string) {
-    [sortColumn, sortDesc] = changeSort(sortColumn, sortDesc, column);
-  }
+  let groupedRows = $derived.by(() => {
+    if (groupBy === "term") {
+      return rows.reduce((acc, termSentiment) => {
+        const term = termSentiment.a_term;
+
+        if (!acc[term]) {
+          acc[term] = [];
+        }
+
+        acc[term].push(termSentiment);
+        return acc;
+      }, {});
+    } else {
+      return rows.reduce((acc, termSentiment) => {
+        const model = termSentiment.model_id;
+
+        if (!acc[model]) {
+          acc[model] = [];
+        }
+
+        acc[model].push(termSentiment);
+        return acc;
+      }, {});
+    }
+  });
 
   let active = $derived(!!colorScale && !!termCategory && !!judgementCategory);
 
@@ -39,33 +64,60 @@
   });
 </script>
 
-{#snippet sortHeader(columnId: string, label: string)}
-  <th scope="col" class="cursor-pointer" onclick={() => doChangeSort(columnId)}>
-    {label}
-    <SortIcon active={sortColumn === columnId} {sortDesc} />
-  </th>
-{/snippet}
-
 {#if active}
+  <div class="d-flex align-items-center gap-2 mb-2">
+    <label for="sort-select" class={config.theme.headingCssClasses}>
+      Group By
+    </label>
+    <select
+      class="form-select form-select-sm w-auto"
+      id="sort-select"
+      bind:value={groupBy}
+    >
+      <option value={"term"}>By Term then Model</option>
+      <option value={"model"}>By Model then Term</option>
+    </select>
+  </div>
+
   <table class="table table-striped table-hover">
     <thead>
       <tr>
-        {@render sortHeader("model_id", "Model")}
-        {@render sortHeader("a_term", "Term")}
-        {@render sortHeader("positive_term", "Positive Term")}
-        {@render sortHeader("negative_term", "Negative Term")}
-        {@render sortHeader("score_axis", "Score")}
+        <th scope="col"> Term / Model </th>
+        <th scope="col"> Positive </th>
+        <th scope="col"> Negative </th>
+        <th scope="col"> Score </th>
       </tr>
     </thead>
     <tbody>
-      {#each rows as row}
+      {#each Object.entries(groupedRows) as [groupName, rows]}
         <tr>
-          <td>{row.model_id}</td>
-          <td>{row.a_term}</td>
-          <td>{row.positive_term}</td>
-          <td>{row.negative_term}</td>
-          <td>
-            <ScoreBar score={row.score_axis} />
+          <td class="fw-bold" colspan="4">
+            {groupName}
+          </td>
+        </tr>
+
+        <tr>
+          <td class="p-0" colspan="4">
+            <table class="table table-borderless table-hover nested-table mb-0">
+              <tbody>
+                {#each rows as row}
+                  <tr>
+                    <td class="ps-4">
+                      {#if groupBy === "term"}
+                        {row.model_id}
+                      {:else}
+                        {row.a_term}
+                      {/if}
+                    </td>
+                    <td>{row.positive_term}</td>
+                    <td>{row.negative_term}</td>
+                    <td>
+                      <ScoreBar score={row.score_axis} />
+                    </td>
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
           </td>
         </tr>
       {/each}
@@ -74,3 +126,14 @@
 {:else}
   Please select a category and judgment category.
 {/if}
+
+<style>
+  .table {
+    table-layout: fixed;
+  }
+
+  .table th:last-of-type,
+  .table td:last-of-type {
+    width: 30%;
+  }
+</style>
