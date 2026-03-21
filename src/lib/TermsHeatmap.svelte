@@ -50,7 +50,7 @@
   let title = $derived.by(() => {
     let title = selectedTermCategory ? selectedTermCategory : "All";
     if (positiveTerm && negativeTerm) {
-      title += ` ("${positiveTerm}" vs "${negativeTerm}")`;
+      title += `: "${positiveTerm}" vs "${negativeTerm}"`;
     }
     return title;
   });
@@ -108,9 +108,9 @@
           </td>
 
           {#each models as model}
-            <td class="text-center hover-group p-1">
+            <td class="text-center p-1">
               <div
-                class="rounded"
+                class="rounded hover-group"
                 style="background-color: {colorScale(row[model.model_id])};"
               >
                 <span class="show-on-parent-hover">

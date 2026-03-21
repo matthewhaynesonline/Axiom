@@ -33,27 +33,27 @@
 
   let groupedRows = $derived.by(() => {
     if (groupBy === "term") {
-      return rows.reduce((acc, termSentiment) => {
+      const grouped = rows.reduce((acc, termSentiment) => {
         const term = termSentiment.a_term;
-
-        if (!acc[term]) {
-          acc[term] = [];
-        }
-
+        if (!acc[term]) acc[term] = [];
         acc[term].push(termSentiment);
         return acc;
       }, {});
+
+      return Object.fromEntries(
+        Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)),
+      );
     } else {
-      return rows.reduce((acc, termSentiment) => {
+      const grouped = rows.reduce((acc, termSentiment) => {
         const model = termSentiment.model_id;
-
-        if (!acc[model]) {
-          acc[model] = [];
-        }
-
+        if (!acc[model]) acc[model] = [];
         acc[model].push(termSentiment);
         return acc;
       }, {});
+
+      return Object.fromEntries(
+        Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)),
+      );
     }
   });
 

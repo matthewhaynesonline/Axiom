@@ -28,6 +28,20 @@
     showCompositeGroups: boolean;
   } = $props();
 
+  let groupedModels = $derived.by(() => {
+    return models.reduce((acc, model) => {
+      const group = model.group;
+
+      if (!acc[group]) {
+        acc[group] = [];
+      }
+
+      acc[group].push(model);
+
+      return acc;
+    }, {});
+  });
+
   function toggleExpanded(): void {
     expanded = !expanded;
   }
@@ -61,7 +75,7 @@
   }
 </script>
 
-<div class="card bg-body-tertiary my-3">
+<div class="card bg-body-tertiary my-4">
   <div class="card-body">
     {#if expanded}
       <button
@@ -164,18 +178,25 @@
               </label>
             </div>
 
-            {#each models as model}
-              <button
-                type="button"
-                class="btn btn-sm m-1 rounded
+            <div class="row row-cols-2">
+              {#each Object.entries(groupedModels) as [groupName, groupModels]}
+                <div class="col mt-2">
+                  <div>{groupName}</div>
+                  {#each groupModels as model}
+                    <button
+                      type="button"
+                      class="btn btn-sm m-1 rounded px-1 py-0
               {selectedModels.some((m) => m.model_id === model.model_id)
-                  ? modelGroupToCssButtonClass(model.group)[0]
-                  : modelGroupToCssButtonClass(model.group)[1]}"
-                onclick={() => toggleSelectedModel(model)}
-              >
-                {model.model_name}
-              </button>
-            {/each}
+                        ? modelGroupToCssButtonClass(model.group)[0]
+                        : modelGroupToCssButtonClass(model.group)[1]}"
+                      onclick={() => toggleSelectedModel(model)}
+                    >
+                      {model.model_name}
+                    </button>
+                  {/each}
+                </div>
+              {/each}
+            </div>
           {:else}
             <span class="form-label {config.theme.headingCssClasses}">
               Models Filter Not Applicable

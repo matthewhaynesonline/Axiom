@@ -1,14 +1,16 @@
-$color-positive: #10b981;
-$color-negative: #f43f5e;
-$color-neutral: #ded8c6;
-$color-muted: #6b7280;
+$color-positive: #2dd4c9;
+$color-negative: #f87185;
+$color-neutral: #c8c0ac;
+$color-muted: #9ca3af;
 
-$primary: #7c6fe0;
-$secondary: #78716c;
-$warning: #d97706;
-$info: #3b82f6;
+$primary: #9d81f8;
+$secondary: #6b7280;
+$warning: #fadb8f;
+$info: #60b2fa;
 $success: $color-positive;
 $danger: $color-negative;
+
+$grid-gutter-width: 2rem;
 
 @import "bootstrap/scss/bootstrap";
 

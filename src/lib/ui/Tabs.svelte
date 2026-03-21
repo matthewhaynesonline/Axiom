@@ -14,7 +14,7 @@
   }
 </script>
 
-<ul class="nav nav-underline mb-2" role="tablist">
+<ul class="nav nav-underline mb-4" role="tablist">
   {#each tabs as tab}
     <li class="nav-item" role="presentation">
       <button
