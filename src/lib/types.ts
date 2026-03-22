@@ -49,9 +49,9 @@ export type CssButtonOutlineClass =
   | "btn-outline-dark";
 
 export type AppTab =
-  | "Term Sentiment"
-  | "Sentiment Consensus"
-  | "Term Details"
+  | "Sentiment Heatmap"
+  | "Where Models Disagree"
+  | "Per Term Breakdown"
   | "Value Systems"
   | "Models";
 

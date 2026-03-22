@@ -7,6 +7,7 @@
   import { createContinuousSentimentScale as createColorScale } from "./plot";
   import { changeSort, formatPercent } from "./utils";
 
+  import MethodologyModal from "./ui/MethodologyModal.svelte";
   import SortIcon from "./ui/SortIcon.svelte";
   import ScoreVal from "./ui/ScoreVal.svelte";
 
@@ -81,6 +82,20 @@
   </th>
 {/snippet}
 
+<MethodologyModal>
+  <p>
+    Each term is scored against a semantic axis defined by a pair of opposing
+    anchors (e.g. good vs evil). The axis is derived by subtracting the negative
+    pole embedding from the positive pole embedding, producing a directional
+    vector in embedding space. Each term's embedding is then projected onto that
+    axis via dot product. The resulting score reflects how closely the term
+    aligns with the positive pole versus the negative pole. Scores are
+    normalized using a tanh scaled z-score to keep values in a comparable range
+    across models. Rows are terms, columns are models; color encodes direction
+    and intensity of alignment.
+  </p>
+</MethodologyModal>
+
 <h5 class="border-start border-4 border-primary my-4 ps-2">
   {title}
 </h5>
@@ -91,17 +106,17 @@
     <table class="table table-hover">
       <thead>
         <tr class="text-wrap text-break">
-          {@render sortHeader("a_term", "Term", "text-end pe-2")}
+          {@render sortHeader("a_term", "Term", "text-end pe-3")}
           {#each models as model}
             {@render sortHeader(model.model_id, model.model_name, "angled")}
           {/each}
-          {@render sortHeader(avg_score_column, "Average")}
+          {@render sortHeader(avg_score_column, "All Average", "angled")}
         </tr>
       </thead>
       <tbody>
         {#each rows as row}
           <tr class="align-middle">
-            <td class="text-end pe-2">
+            <td class="text-end pe-3">
               {row.a_term}
               {#if !selectedJudgementTermsCategory && row.positive_term && row.negative_term}
                 ({row.positive_term} vs {row.negative_term})
@@ -138,7 +153,7 @@
   }
 
   th.angled > div {
-    transform: rotate(-45deg);
+    transform: rotate(-35deg);
     transform-origin: left bottom;
     width: 55px;
     white-space: nowrap;

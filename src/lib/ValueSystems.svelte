@@ -10,6 +10,8 @@
 
   import { groupSortKey } from "./models/model_utils";
 
+  import MethodologyModal from "./ui/MethodologyModal.svelte";
+
   let {
     dt,
   }: {
@@ -109,6 +111,24 @@
     colorScale = createColorScale();
   });
 </script>
+
+<MethodologyModal>
+  <p>
+    Each question (e.g. Best type of economy) and each candidate answer (e.g.
+    capitalism, socialism) are encoded using each model's query encoding
+    function. Similarity between the question embedding and each answer
+    embedding is computed via cosine similarity. Results are then min-max
+    normalized within each model so scores are comparable across questions with
+    different numbers of options. The final ranking reflects which answers each
+    model places geometrically closest to the question in embedding space.
+  </p>
+  <p>
+    <strong>
+      Note: this does not use the axis projection scoring method that the other
+      insights use.
+    </strong>
+  </p>
+</MethodologyModal>
 
 <!-- {@html dtHTML} -->
 

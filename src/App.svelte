@@ -17,16 +17,16 @@
   import ValueSystems from "./lib/ValueSystems.svelte";
 
   const tabs: AppTabList = [
-    "Term Sentiment",
-    "Sentiment Consensus",
-    "Term Details",
+    "Sentiment Heatmap",
+    "Where Models Disagree",
+    "Per Term Breakdown",
     "Value Systems",
     "Models",
   ];
 
   let filtersExpanded = $state(true);
 
-  let activeTab: AppTab = $state("Term Sentiment");
+  let activeTab: AppTab = $state("Sentiment Heatmap");
   let showCompositeGroups: boolean = $state(true);
 
   let modelsMeta: aq.ColumnTable | null = $state(null);
@@ -147,7 +147,7 @@
     return activeTermSentimentDt?.filter(
       aq.escape(
         (d) =>
-          (selectedModelsEmpty || selectedModelIds.includes(d.model_id)) &&
+          selectedModelIds.includes(d.model_id) &&
           (selectedTermCategory === null ||
             d.a_category === selectedTermCategory) &&
           (selectedJudgementTermsCategory === null ||
@@ -190,9 +190,7 @@
 
   let filteredValueSystemRankingsDt = $derived.by(() => {
     return valueSystemRankingsDt?.filter(
-      aq.escape(
-        (d) => selectedModelsEmpty || selectedModelIds.includes(d.model_id),
-      ),
+      aq.escape((d) => selectedModelIds.includes(d.model_id)),
     );
   });
 
@@ -258,7 +256,7 @@
     {#if loaded}
       <Tabs {tabs} bind:activeTab />
 
-      {#if activeTab === "Term Sentiment"}
+      {#if activeTab === "Sentiment Heatmap"}
         <Filters
           bind:expanded={filtersExpanded}
           {models}
@@ -276,7 +274,7 @@
           {selectedTermCategory}
           {selectedJudgementTermsCategory}
         />
-      {:else if activeTab === "Sentiment Consensus"}
+      {:else if activeTab === "Where Models Disagree"}
         <Filters
           bind:expanded={filtersExpanded}
           {termCategories}
@@ -291,7 +289,7 @@
           termCategory={selectedTermCategory}
           judgementCategory={selectedJudgementTermsCategory}
         />
-      {:else if activeTab === "Term Details"}
+      {:else if activeTab === "Per Term Breakdown"}
         <Filters
           bind:expanded={filtersExpanded}
           {models}

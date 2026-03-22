@@ -44,6 +44,10 @@
       size: 12,
       fill: `var(${config.theme.cssVars.colors.muted})`,
     },
+    quadrantLabel: {
+      paddingX: 16,
+      paddingY: 24,
+    },
     stroke: {
       color: "grey",
     },
@@ -137,7 +141,7 @@
       y={{
         domain: animatedDomainY.current,
         // flip y so positive is at the top
-        reverse: true,
+        // reverse: true,
       }}
       height={plotHeight}
     >
@@ -177,6 +181,48 @@
         stroke={getDotColor}
         strokeOpacity={0.8}
         strokeWidth={1.5}
+      />
+
+      <!-- Quadrant labels -->
+      <Text
+        x={defaultDomainX[0]}
+        y={defaultDomainY[1]}
+        text="negative contested"
+        dx={theme.quadrantLabel.paddingX}
+        dy={theme.quadrantLabel.paddingY}
+        fontSize={theme.text.size}
+        textAnchor="start"
+        fill={theme.text.fill}
+      />
+      <Text
+        x={defaultDomainX[1]}
+        y={defaultDomainY[1]}
+        text="positive contested"
+        dx={-theme.quadrantLabel.paddingX}
+        dy={theme.quadrantLabel.paddingY}
+        fontSize={theme.text.size}
+        textAnchor="end"
+        fill={theme.text.fill}
+      />
+      <Text
+        x={defaultDomainX[0]}
+        y={defaultDomainY[0]}
+        text="negative consensus"
+        dx={theme.quadrantLabel.paddingX}
+        dy={-theme.quadrantLabel.paddingY}
+        fontSize={theme.text.size}
+        textAnchor="start"
+        fill={theme.text.fill}
+      />
+      <Text
+        x={defaultDomainX[1]}
+        y={defaultDomainY[0]}
+        text="positive consensus"
+        dx={-theme.quadrantLabel.paddingX}
+        dy={-theme.quadrantLabel.paddingY}
+        fontSize={theme.text.size}
+        textAnchor="end"
+        fill={theme.text.fill}
       />
 
       {#each points as point}

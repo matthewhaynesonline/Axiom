@@ -6,6 +6,7 @@
   import config from "../config.json";
   import { createContinuousSentimentScale as createColorScale } from "./plot";
 
+  import MethodologyModal from "./ui/MethodologyModal.svelte";
   import ScoreBar from "./ui/ScoreBar.svelte";
 
   let {
@@ -63,6 +64,15 @@
     colorScale = createColorScale();
   });
 </script>
+
+<MethodologyModal>
+  <p>
+    Displays the raw axis projection score for each term broken down by
+    individual model, using the same scoring method as the Sentiment Heatmap.
+    Allows direct comparison of how a specific term is encoded across models and
+    origin groups.
+  </p>
+</MethodologyModal>
 
 {#if active}
   <div class="d-flex align-items-center gap-2 mb-2">

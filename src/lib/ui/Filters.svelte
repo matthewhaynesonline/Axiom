@@ -63,6 +63,16 @@
     }
   }
 
+  function enableAllModels(): void {
+    if (selectedModels !== undefined) {
+      selectedModels = models;
+    }
+  }
+
+  function disableAllModels(): void {
+    selectedModels = [];
+  }
+
   function doReset(): void {
     selectedTermCategory = null;
     selectedJudgementTermsCategory = null;
@@ -78,20 +88,8 @@
 <div class="card bg-body-tertiary my-4">
   <div class="card-body">
     {#if expanded}
-      <button
-        type="button"
-        class="btn btn-secondary btn-sm px-4 bg-body border-secondary-subtle float-end"
-        onclick={toggleExpanded}
-      >
-        {#if expanded}
-          hide ▲
-        {:else}
-          show ▼
-        {/if}
-      </button>
-
       <div class="row">
-        <div class="col col-lg-7">
+        <div class="col-12 col-md-6 col-lg-7 col-xl-8 border-end">
           {#if models && selectedModels}
             <div>
               <label class="form-label {config.theme.headingCssClasses}">
@@ -118,15 +116,69 @@
                 </div>
               {/each}
             </div>
+
+            <div class="mt-3">
+              <button
+                type="button"
+                class="btn btn-sm btn-link text-decoration-none"
+                onclick={enableAllModels}
+              >
+                Enable All
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-sm btn-link text-decoration-none"
+                onclick={disableAllModels}
+              >
+                Disable All
+              </button>
+
+              <div class="form-check form-switch d-inline-block ms-2">
+                <input
+                  class="form-check-input cursor-pointer"
+                  type="checkbox"
+                  role="switch"
+                  id="compositeToggle"
+                  bind:checked={showCompositeGroups}
+                />
+                <label
+                  class="form-check-label cursor-pointer"
+                  for="compositeToggle"
+                >
+                  Composite Groups
+                </label>
+              </div>
+            </div>
           {:else}
-            <span class="form-label {config.theme.headingCssClasses}">
-              Models Filter Not Applicable
+            <div class="form-label {config.theme.headingCssClasses}">
+              Models
+            </div>
+
+            <span class="fst-italic">
+              Individual Models Filter Not Applicable
             </span>
+
+            <div class="mt-3 form-check form-switch">
+              <input
+                class="form-check-input cursor-pointer"
+                type="checkbox"
+                role="switch"
+                id="compositeToggle"
+                bind:checked={showCompositeGroups}
+              />
+              <label
+                class="form-check-label cursor-pointer"
+                for="compositeToggle"
+              >
+                Composite Groups
+              </label>
+            </div>
           {/if}
         </div>
 
-        <div class="col">
-          <div class="row">
+        <div class="col-12 col-md-6 col-lg-5 col-xl-4 d-flex flex-column">
+          <div class="row mb-3">
             {#if termCategories}
               <div class="col">
                 <label
@@ -172,25 +224,7 @@
             {/if}
           </div>
 
-          <div class="row mt-3">
-            <div class="col">
-              <div class="mb-3 form-check form-switch">
-                <input
-                  class="form-check-input cursor-pointer"
-                  type="checkbox"
-                  role="switch"
-                  id="compositeToggle"
-                  bind:checked={showCompositeGroups}
-                />
-                <label
-                  class="form-check-label cursor-pointer"
-                  for="compositeToggle"
-                >
-                  Include Composite Group Averages (e.g. West, Academia)
-                </label>
-              </div>
-            </div>
-
+          <div class="row mt-auto">
             {#if models || termCategories || judgementTermsCategories}
               <div class="col">
                 <button
@@ -202,6 +236,20 @@
                 </button>
               </div>
             {/if}
+
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm px-4 bg-body border-secondary-subtle float-end"
+                onclick={toggleExpanded}
+              >
+                {#if expanded}
+                  hide ▲
+                {:else}
+                  show ▼
+                {/if}
+              </button>
+            </div>
           </div>
         </div>
       </div>
