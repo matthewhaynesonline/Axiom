@@ -2,7 +2,8 @@
   "files": {
     "modelsMeta": "enabled_models.csv",
     "termPairs": "aie_term_pairs.arrow",
-    "termSentiment": "aie_term_sentiment.arrow"
+    "termSentiment": "aie_term_sentiment.arrow",
+    "valueSystemRankings": "value_system_rankings.arrow"
   },
   "scale": {
     "sentiment": {

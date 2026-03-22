@@ -42,37 +42,39 @@
   </th>
 {/snippet}
 
-<table class="table table-borderless table-hover">
-  <thead>
-    <tr>
-      {@render sortHeader("model_id", "Name")}
-      {@render sortHeader("group", "Group")}
-      {@render sortHeader("type", "Type")}
-      {@render sortHeader("license", "License Name")}
-    </tr>
-  </thead>
-  <tbody>
-    {#each rows as model}
+<div class="table-responsive">
+  <table class="table table-borderless table-hover">
+    <thead>
       <tr>
-        <td>
-          <a href={model.model_url} target="_blank" rel="external">
-            {model.model_id} ➚
-          </a>
-        </td>
-        <td>
-          <Badge
-            label={model.group}
-            bgClass={modelGroupToCssClass(model.group)}
-          />
-        </td>
-        <td>{model.type}</td>
-        <td>
-          <Badge
-            label={model.license}
-            bgClass={modelLicenseScoreToCssClass(model.license_score)}
-          />
-        </td>
+        {@render sortHeader("model_id", "Name")}
+        {@render sortHeader("group", "Group")}
+        {@render sortHeader("type", "Type")}
+        {@render sortHeader("license", "License Name")}
       </tr>
-    {/each}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {#each rows as model}
+        <tr>
+          <td>
+            <a href={model.model_url} target="_blank" rel="external">
+              {model.model_id} ➚
+            </a>
+          </td>
+          <td>
+            <Badge
+              label={model.group}
+              bgClass={modelGroupToCssClass(model.group)}
+            />
+          </td>
+          <td>{model.type}</td>
+          <td>
+            <Badge
+              label={model.license}
+              bgClass={modelLicenseScoreToCssClass(model.license_score)}
+            />
+          </td>
+        </tr>
+      {/each}
+    </tbody>
+  </table>
+</div>

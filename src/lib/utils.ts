@@ -7,6 +7,10 @@ export function formatPercent(value: number, offset: number = 0.0): number {
   return Math.round((value + offset) * 100);
 }
 
+export function formatDecimal(value: number): string {
+  return value.toFixed(config.theme.numDecimalsDisplay);
+}
+
 export async function loadDtFromArrow(
   arrowFile: string,
   lowerCaseModelId: boolean = true,

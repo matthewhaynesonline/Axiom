@@ -51,7 +51,7 @@ export function modelGroupToCssButtonClass(group: ModelGroup): ButtonClasses {
   );
 }
 
-const groupSortKey = (group: string | undefined) =>
+export const groupSortKey = (group: string | undefined) =>
   group === "composite" ? 1 : 0;
 
 export function sortModels(models: Model[]): Model[] {

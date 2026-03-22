@@ -52,6 +52,7 @@ export type AppTab =
   | "Term Sentiment"
   | "Sentiment Consensus"
   | "Term Details"
+  | "Value Systems"
   | "Models";
 
 export type AppTabList = AppTab[];
@@ -85,4 +86,26 @@ export type TermSentiment = {
   negative_term: string;
   model_id: string;
   score_axis: number;
+};
+
+export type ValueSystemGroup =
+  | "government"
+  | "economy"
+  | "freedom"
+  | "social_order"
+  | "justice"
+  | "power_structure"
+  | "identity"
+  | "ethics"
+  | "epistemological";
+
+export type ValueSystemRanking = {
+  model_id: string;
+  model_group: ModelGroup;
+  grouping: ValueSystemGroup;
+  query: string;
+  option: string;
+  rank: number;
+  score: number;
+  score_norm: number;
 };

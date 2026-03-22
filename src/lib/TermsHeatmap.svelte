@@ -87,54 +87,51 @@
 
 {#if loaded}
   <!-- {@html dtHTML} -->
-  <table class="table table-hover">
-    <thead>
-      <tr class="text-wrap text-break">
-        {@render sortHeader("a_term", "Term", "text-end pe-2")}
-        {#each models as model}
-          {@render sortHeader(model.model_id, model.model_name, "angled")}
-        {/each}
-        {@render sortHeader(avg_score_column, "Average")}
-      </tr>
-    </thead>
-    <tbody>
-      {#each rows as row}
-        <tr class="align-middle">
-          <td class="text-end pe-2">
-            {row.a_term}
-            {#if !selectedJudgementTermsCategory && row.positive_term && row.negative_term}
-              ({row.positive_term} vs {row.negative_term})
-            {/if}
-          </td>
-
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr class="text-wrap text-break">
+          {@render sortHeader("a_term", "Term", "text-end pe-2")}
           {#each models as model}
-            <td class="text-center p-1">
-              <div
-                class="rounded hover-group"
-                style="background-color: {colorScale(row[model.model_id])};"
-              >
-                <span class="show-on-parent-hover">
-                  {formatPercent(row[model.model_id], config.scale.offset)}
-                </span>
-              </div>
-            </td>
+            {@render sortHeader(model.model_id, model.model_name, "angled")}
           {/each}
-
-          <td>
-            <ScoreVal score={row[avg_score_column]} />
-          </td>
+          {@render sortHeader(avg_score_column, "Average")}
         </tr>
-      {/each}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {#each rows as row}
+          <tr class="align-middle">
+            <td class="text-end pe-2">
+              {row.a_term}
+              {#if !selectedJudgementTermsCategory && row.positive_term && row.negative_term}
+                ({row.positive_term} vs {row.negative_term})
+              {/if}
+            </td>
+
+            {#each models as model}
+              <td class="text-center p-1">
+                <div
+                  class="rounded hover-group"
+                  style="background-color: {colorScale(row[model.model_id])};"
+                >
+                  <span class="show-on-parent-hover">
+                    {formatPercent(row[model.model_id], config.scale.offset)}
+                  </span>
+                </div>
+              </td>
+            {/each}
+
+            <td>
+              <ScoreVal score={row[avg_score_column]} />
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 {/if}
 
 <style>
-  table {
-    border-spacing: 0;
-    table-layout: fixed;
-  }
-
   th.angled {
     height: 160px;
     vertical-align: bottom;

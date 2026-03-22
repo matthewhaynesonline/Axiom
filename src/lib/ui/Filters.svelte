@@ -91,6 +91,40 @@
       </button>
 
       <div class="row">
+        <div class="col-7">
+          {#if models && selectedModels}
+            <div>
+              <label class="form-label {config.theme.headingCssClasses}">
+                Models
+              </label>
+            </div>
+
+            <div class="row row-cols-2">
+              {#each Object.entries(groupedModels) as [groupName, groupModels]}
+                <div class="col mt-2">
+                  <div>{groupName}</div>
+                  {#each groupModels as model}
+                    <button
+                      type="button"
+                      class="btn btn-sm m-1 rounded px-1 py-0
+              {selectedModels.some((m) => m.model_id === model.model_id)
+                        ? modelGroupToCssButtonClass(model.group)[0]
+                        : modelGroupToCssButtonClass(model.group)[1]}"
+                      onclick={() => toggleSelectedModel(model)}
+                    >
+                      {model.model_name}
+                    </button>
+                  {/each}
+                </div>
+              {/each}
+            </div>
+          {:else}
+            <span class="form-label {config.theme.headingCssClasses}">
+              Models Filter Not Applicable
+            </span>
+          {/if}
+        </div>
+
         <div class="col">
           <div class="row">
             {#if termCategories}
@@ -138,18 +172,7 @@
             {/if}
           </div>
 
-          <div class="row align-items-end mt-3">
-            {#if models || termCategories || judgementTermsCategories}
-              <div class="col">
-                <button
-                  type="button"
-                  class="btn btn-secondary btn-sm px-4 bg-body border-secondary-subtle"
-                  onclick={doReset}
-                >
-                  Reset
-                </button>
-              </div>
-            {/if}
+          <div class="row mt-3">
             <div class="col">
               <div class="mb-3 form-check form-switch">
                 <input
@@ -167,41 +190,19 @@
                 </label>
               </div>
             </div>
+
+            {#if models || termCategories || judgementTermsCategories}
+              <div class="col">
+                <button
+                  type="button"
+                  class="btn btn-secondary btn-sm px-4 bg-body border-secondary-subtle"
+                  onclick={doReset}
+                >
+                  Reset
+                </button>
+              </div>
+            {/if}
           </div>
-        </div>
-
-        <div class="col">
-          {#if models && selectedModels}
-            <div>
-              <label class="form-label {config.theme.headingCssClasses}">
-                Models
-              </label>
-            </div>
-
-            <div class="row row-cols-2">
-              {#each Object.entries(groupedModels) as [groupName, groupModels]}
-                <div class="col mt-2">
-                  <div>{groupName}</div>
-                  {#each groupModels as model}
-                    <button
-                      type="button"
-                      class="btn btn-sm m-1 rounded px-1 py-0
-              {selectedModels.some((m) => m.model_id === model.model_id)
-                        ? modelGroupToCssButtonClass(model.group)[0]
-                        : modelGroupToCssButtonClass(model.group)[1]}"
-                      onclick={() => toggleSelectedModel(model)}
-                    >
-                      {model.model_name}
-                    </button>
-                  {/each}
-                </div>
-              {/each}
-            </div>
-          {:else}
-            <span class="form-label {config.theme.headingCssClasses}">
-              Models Filter Not Applicable
-            </span>
-          {/if}
         </div>
       </div>
     {:else}

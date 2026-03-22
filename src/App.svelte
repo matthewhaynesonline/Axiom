@@ -14,11 +14,13 @@
   import ThemeSelector from "./lib/ui/ThemeSelector.svelte";
   import TermsList from "./lib/TermsList.svelte";
   import TermsHeatmap from "./lib/TermsHeatmap.svelte";
+  import ValueSystems from "./lib/ValueSystems.svelte";
 
   const tabs: AppTabList = [
     "Term Sentiment",
     "Sentiment Consensus",
     "Term Details",
+    "Value Systems",
     "Models",
   ];
 
@@ -30,8 +32,9 @@
   let modelsMeta: aq.ColumnTable | null = $state(null);
   // let termPairsDt: aq.ColumnTable | null = $state(null);
   let termSentimentDt: aq.ColumnTable | null = $state(null);
+  let valueSystemRankingsDt: aq.ColumnTable | null = $state(null);
 
-  let loaded = $derived(modelsMeta && termSentimentDt);
+  let loaded = $derived(modelsMeta && termSentimentDt && valueSystemRankingsDt);
 
   let activeTermSentimentDt = $derived.by(() => {
     if (!termSentimentDt) return null;
@@ -47,41 +50,37 @@
   });
 
   let termSentimentDtPivot = $derived.by(() => {
-    return (
-      activeTermSentimentDt
-        ?.select(
-          "a_term",
-          "a_category",
-          "b_category",
-          "positive_term",
-          "negative_term",
-          "model_id",
-          "score_axis",
-        )
+    if (!activeTermSentimentDt) return null;
 
-        // 2. Group by the term to calculate the mean score across all models
-        .groupby(
-          "a_term",
-          "a_category",
-          "b_category",
-          "positive_term",
-          "negative_term",
-        )
-        .derive({ avg_score: (d) => aq.op.mean(d.score_axis) })
+    const pivoted = activeTermSentimentDt
+      .select(
+        "a_term",
+        "a_category",
+        "b_category",
+        "positive_term",
+        "negative_term",
+        "model_id",
+        "score_axis",
+      )
+      .groupby(
+        "a_term",
+        "a_category",
+        "b_category",
+        "positive_term",
+        "negative_term",
+      )
+      .derive({ avg_score: (d) => aq.op.mean(d.score_axis) })
+      .groupby(
+        "a_term",
+        "a_category",
+        "b_category",
+        "positive_term",
+        "negative_term",
+        "avg_score",
+      )
+      .pivot("model_id", "score_axis");
 
-        // 3. Regroup by term AND the new average so they become our row identifiers
-        .groupby(
-          "a_term",
-          "a_category",
-          "b_category",
-          "positive_term",
-          "negative_term",
-          "avg_score",
-        )
-
-        // 4. Pivot the models into columns, filling them with the score_axis values
-        .pivot("model_id", "score_axis")
-    );
+    return pivoted;
   });
 
   let models = $derived.by(() => {
@@ -189,6 +188,14 @@
     return baseFiltered.select([...nonModelCols, ...keepModelCols]);
   });
 
+  let filteredValueSystemRankingsDt = $derived.by(() => {
+    return valueSystemRankingsDt?.filter(
+      aq.escape(
+        (d) => selectedModelsEmpty || selectedModelIds.includes(d.model_id),
+      ),
+    );
+  });
+
   onMount(async () => {
     await Promise.all([loadModelsMeta(), processData()]);
 
@@ -220,6 +227,20 @@
   async function processData() {
     // termPairsDt = await loadDtFromArrow(config.files.termPairs);
     termSentimentDt = await loadDtFromArrow(config.files.termSentiment);
+    valueSystemRankingsDt = await loadDtFromArrow(
+      config.files.valueSystemRankings,
+    );
+
+    valueSystemRankingsDt = valueSystemRankingsDt
+      .join_left(
+        modelsMeta.derive({ model_id: (d: any) => aq.op.lower(d.model_id) }),
+        "model_id",
+      )
+      .derive({
+        model_name: (d: any) => d.model_name ?? d.model_id,
+      })
+      .select(aq.not("type", "model_url", "license", "license_score"))
+      .orderby("group", "model_id");
   }
 </script>
 
@@ -233,7 +254,7 @@
     </div>
   </nav>
 
-  <div class="container-fluid pt-3">
+  <div class="container-fluid py-3">
     {#if loaded}
       <Tabs {tabs} bind:activeTab />
 
@@ -287,6 +308,19 @@
           termCategory={selectedTermCategory}
           judgementCategory={selectedJudgementTermsCategory}
         />
+      {:else if activeTab === "Value Systems"}
+        <Filters
+          bind:expanded={filtersExpanded}
+          {models}
+          bind:selectedModels={rawSelectedModels}
+          // {termCategories}
+          // bind:selectedTermCategory
+          // {judgementTermsCategories}
+          // bind:selectedJudgementTermsCategory
+          bind:showCompositeGroups
+        />
+
+        <ValueSystems dt={filteredValueSystemRankingsDt} />
       {:else if activeTab === "Models"}
         <ModelsList dt={modelsMeta} />
       {:else}
