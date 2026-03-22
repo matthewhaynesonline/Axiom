@@ -24,6 +24,15 @@
     "Models",
   ];
 
+  const NON_MODEL_COLS = [
+    "a_term",
+    "a_category",
+    "b_category",
+    "positive_term",
+    "negative_term",
+    "avg_score",
+  ];
+
   let filtersExpanded = $state(true);
 
   let activeTab: AppTab = $state("Sentiment Heatmap");
@@ -50,7 +59,7 @@
   let termSentimentDtPivot = $derived.by(() => {
     if (!activeTermSentimentDt) return null;
 
-    const pivoted = activeTermSentimentDt
+    return activeTermSentimentDt
       .select(
         "a_term",
         "a_category",
@@ -77,8 +86,6 @@
         "avg_score",
       )
       .pivot("model_id", "score_axis");
-
-    return pivoted;
   });
 
   let models = $derived.by(() => {
@@ -117,27 +124,25 @@
     selectedModels.map((m) => m.model_id),
   );
 
-  let selectedModelsEmpty: boolean = $derived(
-    !Array.isArray(selectedModels) || selectedModels.length === 0,
-  );
+  let selectedModelsEmpty = $derived(selectedModels.length === 0);
 
-  let termCategories: string[] = $derived.by(() => {
-    return activeTermSentimentDt
+  let termCategories: string[] = $derived(
+    activeTermSentimentDt
       ?.select("a_category")
       .dedupe()
       .array("a_category")
-      .sort() as string[];
-  });
+      .sort() ?? [],
+  ) as string[];
 
   let selectedTermCategory = $state(null);
 
-  let judgementTermsCategories: string[] = $derived.by(() => {
-    return activeTermSentimentDt
+  let judgementTermsCategories: string[] = $derived(
+    activeTermSentimentDt
       ?.select("b_category")
       .dedupe()
       .array("b_category")
-      .sort() as string[];
-  });
+      .sort() ?? [],
+  ) as string[];
 
   let selectedJudgementTermsCategory = $state(null);
 
@@ -167,22 +172,15 @@
 
     if (selectedModelsEmpty || !baseFiltered) return baseFiltered;
 
-    const nonModelCols = [
-      "a_term",
-      "a_category",
-      "b_category",
-      "positive_term",
-      "negative_term",
-      "avg_score",
-    ];
+    const keepModelCols = baseFiltered
+      .columnNames()
+      .filter(
+        (col) =>
+          !NON_MODEL_COLS.includes(col as any) &&
+          selectedModelIds.includes(col),
+      );
 
-    const allCols = baseFiltered.columnNames();
-    const modelCols = allCols.filter((col) => !nonModelCols.includes(col));
-    const keepModelCols = modelCols.filter((col) =>
-      selectedModelIds.includes(col),
-    );
-
-    return baseFiltered.select([...nonModelCols, ...keepModelCols]);
+    return baseFiltered.select([...NON_MODEL_COLS, ...keepModelCols]);
   });
 
   let filteredValueSystemRankingsDt = $derived.by(() => {
@@ -192,7 +190,8 @@
   });
 
   onMount(async () => {
-    await Promise.all([loadModelsMeta(), processData()]);
+    await loadModelsMeta();
+    await processData();
 
     if (models) {
       rawSelectedModels = [...models];

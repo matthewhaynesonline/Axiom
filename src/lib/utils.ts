@@ -18,8 +18,7 @@ export async function loadDtFromArrow(
   const fileResponse = await fetch(arrowFile);
   const arrowTable = tableFromIPC(await fileResponse.arrayBuffer());
 
-  // @ts-ignore
-  let dt = aq.fromArrow(arrowTable);
+  let dt = aq.fromArrow(arrowTable) as aq.ColumnTable;
 
   if (lowerCaseModelId) {
     dt = dt.derive({
@@ -35,15 +34,18 @@ export function changeSort(
   sortDesc: boolean,
   column: string,
 ): [string, boolean] {
-  if (sortColumn === column) {
-    sortDesc = !sortDesc;
-  } else {
-    sortDesc = false;
+  const toggled = sortColumn === column ? !sortDesc : false;
+  return [column, toggled];
+}
+
+function getDocumentCssVarValue(varName: string): string {
+  if (typeof window === "undefined") {
+    return config.theme.cssVars.colors.fallbackValue;
   }
 
-  sortColumn = column;
-
-  return [sortColumn, sortDesc];
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(varName)
+    .trim();
 }
 
 export function getThemePositiveColorValue(): string {
@@ -56,14 +58,4 @@ export function getThemeNegativeColorValue(): string {
 
 export function getThemeNeutralColorValue(): string {
   return getDocumentCssVarValue(config.theme.cssVars.colors.neutral);
-}
-
-function getDocumentCssVarValue(varName: string): string {
-  if (typeof window === "undefined") {
-    return config.theme.cssVars.colors.fallbackValue;
-  }
-
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue(varName)
-    .trim();
 }

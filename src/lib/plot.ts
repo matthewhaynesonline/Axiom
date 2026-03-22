@@ -8,34 +8,43 @@ import {
   getThemeNeutralColorValue,
 } from "./utils";
 
+const { min, max } = config.scale.sentiment;
+
+const SENTIMENT_MID = (min + max) / 2;
+
 export function createContinuousSentimentScale() {
-  return createContinuousScale(
-    config.scale.sentiment.min,
-    (config.scale.sentiment.min + config.scale.sentiment.max) / 2,
-    config.scale.sentiment.max,
-  );
+  return createContinuousScale(min, SENTIMENT_MID, max);
 }
 
 export function createContinuousScale(
   min: number = 0.0,
   mid: number = 0.5,
-  max = 1.0,
+  max: number = 1.0,
 ) {
-  const positive = getThemePositiveColorValue();
-  const negative = getThemeNegativeColorValue();
-  const neutral = getThemeNeutralColorValue();
-
   return scaleLinear()
     .domain([min, mid, max])
-    .range([negative, neutral, positive]);
+    .range([
+      getThemeNegativeColorValue(),
+      getThemeNeutralColorValue(),
+      getThemePositiveColorValue(),
+    ]);
+}
+
+export interface SentimentVsDisagreementParams {
+  a_category: string;
+  b_category: string;
+  positive_term: string;
+  negative_term: string;
 }
 
 export function prepSentimentVsDisagreement(
   dt: aq.ColumnTable,
-  a_category: string,
-  b_category: string,
-  positive_term: string,
-  negative_term: string,
+  {
+    a_category,
+    b_category,
+    positive_term,
+    negative_term,
+  }: SentimentVsDisagreementParams,
 ): aq.ColumnTable {
   return (
     dt
