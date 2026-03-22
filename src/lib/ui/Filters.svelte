@@ -21,10 +21,10 @@
     expanded: boolean;
     models?: Model[] | null;
     selectedModels?: Model[];
-    termCategories: string[];
-    selectedTermCategory: string | null;
-    judgementTermsCategories: string[];
-    selectedJudgementTermsCategory: string | null;
+    termCategories?: string[];
+    selectedTermCategory?: string | null;
+    judgementTermsCategories?: string[];
+    selectedJudgementTermsCategory?: string | null;
     showCompositeGroups: boolean;
   } = $props();
 

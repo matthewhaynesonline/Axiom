@@ -15,7 +15,7 @@
   let {
     dt,
   }: {
-    dt: aq.ColumnTable | null;
+    dt?: aq.ColumnTable | null;
   } = $props();
 
   let colorScale = $state();
@@ -114,25 +114,32 @@
 
 <MethodologyModal>
   <p>
-    Each question (e.g. Best type of economy) and each candidate answer (e.g.
-    capitalism, socialism) are encoded using each model's query encoding
-    function. Similarity between the question embedding and each answer
-    embedding is computed via cosine similarity. Results are then min-max
-    normalized within each model so scores are comparable across questions with
-    different numbers of options. The final ranking reflects which answers each
-    model places geometrically closest to the question in embedding space.
-  </p>
-  <p>
     <strong>
       Note: this does not use the axis projection scoring method that the other
       insights use.
     </strong>
   </p>
+
+  <p>
+    Each question (e.g. Best type of economy) and each candidate answer (e.g.
+    capitalism, socialism) are encoded using each model's query encoding
+    function. Similarity between the question embedding and each answer
+    embedding is computed via cosine similarity. Results are then min-max
+    normalized within each model so scores are comparable across questions with
+    different numbers of options.
+  </p>
+
+  <p>
+    The final ranking reflects which answers each model places geometrically
+    closest to the question in embedding space.
+  </p>
 </MethodologyModal>
 
 <!-- {@html dtHTML} -->
 
-<p class="fst-italic">Hover over a result to see the non normalized score.</p>
+<p class="fst-italic">
+  Hover over a result to see the definition and non normalized score.
+</p>
 
 {#if loaded}
   {#each Object.entries(groupedRows) as [query, modelMap]}

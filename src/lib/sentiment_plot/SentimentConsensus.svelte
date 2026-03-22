@@ -60,15 +60,19 @@
 </script>
 
 <MethodologyModal>
+  <p>Uses the same axis projection scores as the Sentiment Heatmap.</p>
+
   <p>
-    Uses the same axis projection scores as the Sentiment Heatmap. For each
-    term, the mean score and standard deviation across all models are computed.
-    Mean score (x-axis) shows the overall direction of alignment, whether models
-    collectively lean positive or negative. Standard deviation (y-axis) shows
-    how much models disagree. Terms in the upper left are contested and lean
-    negative; upper right are contested and lean positive; lower quadrants
-    represent consensus. Bubble size encodes consensus strength; opacity encodes
-    intensity.
+    For each term, the mean score and standard deviation across all models are
+    computed. Mean score (x-axis) shows the overall direction of alignment,
+    whether models collectively lean positive or negative. Standard deviation
+    (y-axis) shows how much models disagree.
+  </p>
+
+  <p>
+    Terms in the upper left are contested and lean negative; upper right are
+    contested and lean positive; lower quadrants represent consensus. Bubble
+    size encodes consensus strength; opacity encodes intensity.
   </p>
 </MethodologyModal>
 

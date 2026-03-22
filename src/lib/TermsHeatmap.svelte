@@ -87,12 +87,19 @@
     Each term is scored against a semantic axis defined by a pair of opposing
     anchors (e.g. good vs evil). The axis is derived by subtracting the negative
     pole embedding from the positive pole embedding, producing a directional
-    vector in embedding space. Each term's embedding is then projected onto that
-    axis via dot product. The resulting score reflects how closely the term
-    aligns with the positive pole versus the negative pole. Scores are
-    normalized using a tanh scaled z-score to keep values in a comparable range
-    across models. Rows are terms, columns are models; color encodes direction
-    and intensity of alignment.
+    vector in embedding space.
+  </p>
+
+  <p>
+    Each term's embedding is then projected onto that axis via dot product. The
+    resulting score reflects how closely the term aligns with the positive pole
+    versus the negative pole. Scores are normalized using a tanh scaled z-score
+    to keep values in a comparable range across models.
+  </p>
+
+  <p>
+    Rows are terms, columns are models; color encodes direction and intensity of
+    alignment.
   </p>
 </MethodologyModal>
 

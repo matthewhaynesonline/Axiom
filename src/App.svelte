@@ -30,7 +30,6 @@
   let showCompositeGroups: boolean = $state(true);
 
   let modelsMeta: aq.ColumnTable | null = $state(null);
-  // let termPairsDt: aq.ColumnTable | null = $state(null);
   let termSentimentDt: aq.ColumnTable | null = $state(null);
   let valueSystemRankingsDt: aq.ColumnTable | null = $state(null);
 
@@ -43,7 +42,6 @@
       return termSentimentDt;
     }
 
-    // Filter out rows where the model_id starts with "composite_"
     return termSentimentDt.filter(
       aq.escape((d) => !d.model_id.startsWith("composite_")),
     );
@@ -169,7 +167,6 @@
 
     if (selectedModelsEmpty || !baseFiltered) return baseFiltered;
 
-    // After pivot, models are columns — select non-model cols + only selected model cols
     const nonModelCols = [
       "a_term",
       "a_category",
@@ -223,7 +220,6 @@
   }
 
   async function processData() {
-    // termPairsDt = await loadDtFromArrow(config.files.termPairs);
     termSentimentDt = await loadDtFromArrow(config.files.termSentiment);
     valueSystemRankingsDt = await loadDtFromArrow(
       config.files.valueSystemRankings,
@@ -311,10 +307,6 @@
           bind:expanded={filtersExpanded}
           {models}
           bind:selectedModels={rawSelectedModels}
-          // {termCategories}
-          // bind:selectedTermCategory
-          // {judgementTermsCategories}
-          // bind:selectedJudgementTermsCategory
           bind:showCompositeGroups
         />
 
