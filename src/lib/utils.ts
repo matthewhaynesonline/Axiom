@@ -35,6 +35,7 @@ export function changeSort(
   column: string,
 ): [string, boolean] {
   const toggled = sortColumn === column ? !sortDesc : false;
+
   return [column, toggled];
 }
 

@@ -1,13 +1,12 @@
-<!-- MethodologyModal.svelte -->
 <script lang="ts">
   import type { Snippet } from "svelte";
   import Modal from "./Modal.svelte";
 
-  interface Props {
+  let {
+    children,
+  }: {
     children: Snippet;
-  }
-
-  let { children }: Props = $props();
+  } = $props();
 
   let showModal = $state(false);
 </script>

@@ -16,7 +16,7 @@
   import TermsHeatmap from "./lib/TermsHeatmap.svelte";
   import ValueSystems from "./lib/ValueSystems.svelte";
 
-  const tabs: AppTabList = [
+  const TABS: AppTabList = [
     "Sentiment Heatmap",
     "Where Models Disagree",
     "Per Term Breakdown",
@@ -249,7 +249,7 @@
 
   <div class="container-fluid py-3">
     {#if loaded}
-      <Tabs {tabs} bind:activeTab />
+      <Tabs tabs={TABS} bind:activeTab />
 
       {#if activeTab === "Sentiment Heatmap"}
         <Filters

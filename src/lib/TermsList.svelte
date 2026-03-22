@@ -19,46 +19,44 @@
     judgementCategory?: string | null;
   } = $props();
 
-  type groupByOption = "term" | "model";
+  type GroupByOption = "term" | "model";
 
-  let groupBy: groupByOption = $state("term");
+  let groupBy: GroupByOption = $state("term");
 
-  let colorScale = $state();
+  let colorScale = $state(null);
 
   let sortColumn = $state("model_id");
   let sortDesc = $state(false);
 
   let sortAqColumn = $derived(sortDesc ? aq.desc(sortColumn) : sortColumn);
   let sortedDt = $derived(dt?.orderby(sortAqColumn));
-  let rows = $derived(sortedDt?.objects() ?? []) as TermSentiment[];
+  let rows = $derived((sortedDt?.objects() ?? []) as TermSentiment[]);
 
-  let groupedRows = $derived.by(() => {
-    if (groupBy === "term") {
-      const grouped = rows.reduce((acc, termSentiment) => {
-        const term = termSentiment.a_term;
-        if (!acc[term]) acc[term] = [];
-        acc[term].push(termSentiment);
-        return acc;
-      }, {});
-
-      return Object.fromEntries(
-        Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)),
-      );
-    } else {
-      const grouped = rows.reduce((acc, termSentiment) => {
-        const model = termSentiment.model_id;
-        if (!acc[model]) acc[model] = [];
-        acc[model].push(termSentiment);
-        return acc;
-      }, {});
-
-      return Object.fromEntries(
-        Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)),
-      );
-    }
-  });
+  let groupedRows = $derived(
+    groupBy === "term"
+      ? groupRowsBy(rows, (row) => row.a_term)
+      : groupRowsBy(rows, (row) => row.model_id),
+  );
 
   let active = $derived(!!colorScale && !!termCategory && !!judgementCategory);
+
+  function groupRowsBy(
+    rows: TermSentiment[],
+    key: (row: TermSentiment) => string,
+  ): Record<string, TermSentiment[]> {
+    const grouped = rows.reduce<Record<string, TermSentiment[]>>((acc, row) => {
+      const rowKey = key(row);
+
+      if (!acc[rowKey]) acc[rowKey] = [];
+      acc[rowKey].push(row);
+
+      return acc;
+    }, {});
+
+    return Object.fromEntries(
+      Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b)),
+    );
+  }
 
   $effect(() => {
     colorScale = createColorScale();
@@ -79,45 +77,42 @@
     <label for="sort-select" class={config.theme.headingCssClasses}>
       Group By
     </label>
+
     <select
       class="form-select form-select-sm w-auto"
       id="sort-select"
       bind:value={groupBy}
     >
-      <option value={"term"}>By Term then Model</option>
-      <option value={"model"}>By Model then Term</option>
+      <option value="term">By Term then Model</option>
+      <option value="model">By Model then Term</option>
     </select>
   </div>
 
   <table class="table table-striped table-hover">
     <thead>
       <tr>
-        <th scope="col"> Term / Model </th>
-        <th scope="col"> Positive </th>
-        <th scope="col"> Negative </th>
-        <th scope="col"> Score </th>
+        <th scope="col">
+          {groupBy === "term" ? "Term / Model" : "Model / Term"}
+        </th>
+        <th scope="col">Positive</th>
+        <th scope="col">Negative</th>
+        <th scope="col">Score</th>
       </tr>
     </thead>
     <tbody>
-      {#each Object.entries(groupedRows) as [groupName, rows]}
+      {#each Object.entries(groupedRows) as [groupName, groupedRowItems]}
         <tr>
-          <td class="fw-bold" colspan="4">
-            {groupName}
-          </td>
+          <td class="fw-bold" colspan="4">{groupName}</td>
         </tr>
 
         <tr>
           <td class="p-0" colspan="4">
             <table class="table table-borderless table-hover nested-table mb-0">
               <tbody>
-                {#each rows as row}
+                {#each groupedRowItems as row}
                   <tr>
                     <td class="ps-4">
-                      {#if groupBy === "term"}
-                        {row.model_id}
-                      {:else}
-                        {row.a_term}
-                      {/if}
+                      {groupBy === "term" ? row.model_id : row.a_term}
                     </td>
                     <td>{row.positive_term}</td>
                     <td>{row.negative_term}</td>

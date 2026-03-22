@@ -29,13 +29,12 @@
   } = $props();
 
   let groupedModels = $derived.by(() => {
-    return models.reduce((acc, model) => {
-      const group = model.group;
+    let groupedModels = models ?? [];
 
-      if (!acc[group]) {
-        acc[group] = [];
-      }
+    return groupedModels.reduce((acc, model) => {
+      const { group } = model;
 
+      if (!acc[group]) acc[group] = [];
       acc[group].push(model);
 
       return acc;
@@ -47,9 +46,7 @@
   }
 
   function toggleSelectedModel(model: Model): void {
-    if (models == undefined || selectedModels == undefined) {
-      return;
-    }
+    if (!models || !selectedModels) return;
 
     const modelIndex = selectedModels.findIndex(
       (m) => m.model_id === model.model_id,
@@ -76,14 +73,43 @@
   function doReset(): void {
     selectedTermCategory = null;
     selectedJudgementTermsCategory = null;
-
     showCompositeGroups = true;
 
     if (selectedModels !== undefined) {
       selectedModels = models;
     }
   }
+
+  function isSelected(model: Model): boolean {
+    return selectedModels?.some((m) => m.model_id === model.model_id) ?? false;
+  }
 </script>
+
+{#snippet compositeToggle()}
+  <div class="form-check form-switch d-inline-block ms-2">
+    <input
+      class="form-check-input cursor-pointer"
+      type="checkbox"
+      role="switch"
+      id="compositeToggle"
+      bind:checked={showCompositeGroups}
+    />
+
+    <label class="form-check-label cursor-pointer" for="compositeToggle">
+      Composite Groups
+    </label>
+  </div>
+{/snippet}
+
+{#snippet toggleButton()}
+  <button
+    type="button"
+    class="btn btn-secondary btn-sm px-4 bg-body border-secondary-subtle float-end"
+    onclick={toggleExpanded}
+  >
+    {expanded ? "hide ▲" : "show ▼"}
+  </button>
+{/snippet}
 
 <div class="card bg-body-tertiary my-4">
   <div class="card-body">
@@ -101,13 +127,16 @@
               {#each Object.entries(groupedModels) as [groupName, groupModels]}
                 <div class="col mt-2">
                   <div>{groupName}</div>
+
                   {#each groupModels as model}
+                    {@const [solid, outline] = modelGroupToCssButtonClass(
+                      model.group,
+                    )}
                     <button
                       type="button"
-                      class="btn btn-sm m-1 rounded px-1 py-0
-              {selectedModels.some((m) => m.model_id === model.model_id)
-                        ? modelGroupToCssButtonClass(model.group)[0]
-                        : modelGroupToCssButtonClass(model.group)[1]}"
+                      class="btn btn-sm m-1 rounded px-1 py-0 {isSelected(model)
+                        ? solid
+                        : outline}"
                       onclick={() => toggleSelectedModel(model)}
                     >
                       {model.model_name}
@@ -134,21 +163,7 @@
                 Disable All
               </button>
 
-              <div class="form-check form-switch d-inline-block ms-2">
-                <input
-                  class="form-check-input cursor-pointer"
-                  type="checkbox"
-                  role="switch"
-                  id="compositeToggle"
-                  bind:checked={showCompositeGroups}
-                />
-                <label
-                  class="form-check-label cursor-pointer"
-                  for="compositeToggle"
-                >
-                  Composite Groups
-                </label>
-              </div>
+              {@render compositeToggle()}
             </div>
           {:else}
             <div class="form-label {config.theme.headingCssClasses}">
@@ -159,20 +174,8 @@
               Individual Models Filter Not Applicable
             </span>
 
-            <div class="mt-3 form-check form-switch">
-              <input
-                class="form-check-input cursor-pointer"
-                type="checkbox"
-                role="switch"
-                id="compositeToggle"
-                bind:checked={showCompositeGroups}
-              />
-              <label
-                class="form-check-label cursor-pointer"
-                for="compositeToggle"
-              >
-                Composite Groups
-              </label>
+            <div class="mt-3">
+              {@render compositeToggle()}
             </div>
           {/if}
         </div>
@@ -183,8 +186,11 @@
               <div class="col">
                 <label
                   class="form-label {config.theme.headingCssClasses}"
-                  for="category-select">Category</label
+                  for="category-select"
                 >
+                  Category
+                </label>
+
                 <select
                   class="form-select"
                   name="category-select"
@@ -193,9 +199,7 @@
                   <option value={null}> - All - </option>
 
                   {#each termCategories as termCategory}
-                    <option value={termCategory}>
-                      {termCategory}
-                    </option>
+                    <option value={termCategory}>{termCategory}</option>
                   {/each}
                 </select>
               </div>
@@ -205,18 +209,20 @@
               <div class="col">
                 <label
                   class="form-label {config.theme.headingCssClasses}"
-                  for="judgement-select">Judgement Criteria</label
+                  for="judgement-select"
                 >
+                  Judgement Criteria
+                </label>
+
                 <select
                   class="form-select"
                   name="judgement-select"
                   bind:value={selectedJudgementTermsCategory}
                 >
                   <option value={null}> - All - </option>
-
-                  {#each judgementTermsCategories as judgementTermsCategy}
-                    <option value={judgementTermsCategy}>
-                      {judgementTermsCategy}
+                  {#each judgementTermsCategories as judgementTermsCategory}
+                    <option value={judgementTermsCategory}>
+                      {judgementTermsCategory}
                     </option>
                   {/each}
                 </select>
@@ -238,17 +244,7 @@
             {/if}
 
             <div class="col">
-              <button
-                type="button"
-                class="btn btn-secondary btn-sm px-4 bg-body border-secondary-subtle float-end"
-                onclick={toggleExpanded}
-              >
-                {#if expanded}
-                  hide ▲
-                {:else}
-                  show ▼
-                {/if}
-              </button>
+              {@render toggleButton()}
             </div>
           </div>
         </div>
@@ -270,17 +266,7 @@
 
           <span class="badge rounded-pill text-bg-secondary ms-2">Models</span>
 
-          <button
-            type="button"
-            class="btn btn-secondary btn-sm px-4 bg-body border-secondary-subtle float-end"
-            onclick={toggleExpanded}
-          >
-            {#if expanded}
-              hide ▲
-            {:else}
-              show ▼
-            {/if}
-          </button>
+          {@render toggleButton()}
         </div>
       </div>
     {/if}

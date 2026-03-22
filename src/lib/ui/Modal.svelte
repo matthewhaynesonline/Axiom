@@ -2,15 +2,19 @@
   import type { Snippet } from "svelte";
   import { fade } from "svelte/transition";
 
-  interface Props {
+  let {
+    show,
+    title = "",
+    onclose,
+    children,
+    footer,
+  }: {
     show: boolean;
     title?: string;
     onclose: () => void;
     children: Snippet;
     footer?: Snippet;
-  }
-
-  let { show, title = "", onclose, children, footer }: Props = $props();
+  } = $props();
 </script>
 
 {#if show}
@@ -32,12 +36,14 @@
         {#if title}
           <div class="modal-header">
             <h5 class="modal-title">{title}</h5>
+
             <button
               type="button"
               class="btn-close"
               aria-label="Close"
               onclick={onclose}
-            ></button>
+            >
+            </button>
           </div>
         {/if}
 

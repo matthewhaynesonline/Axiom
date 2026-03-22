@@ -20,42 +20,24 @@
 
   let active = $derived(!!termCategory && !!judgementCategory);
 
-  let judgementCategoryMapping = $derived.by(() => {
-    if (!judgementCategory) {
-      return null;
-    }
+  let judgementCategoryMapping = $derived(
+    judgementCategory
+      ? (judgementCategoriesMapping[judgementCategory] ?? null)
+      : null,
+  );
 
-    return judgementCategoriesMapping[judgementCategory] ?? null;
-  });
-
-  let positiveTerm = $derived.by(() => {
-    if (!judgementCategoryMapping) {
-      return null;
-    }
-
-    return judgementCategoryMapping.positiveTerm;
-  });
-
-  let negativeTerm = $derived.by(() => {
-    if (!judgementCategoryMapping) {
-      return null;
-    }
-
-    return judgementCategoryMapping.negativeTerm;
-  });
+  let positiveTerm = $derived(judgementCategoryMapping?.positiveTerm ?? null);
+  let negativeTerm = $derived(judgementCategoryMapping?.negativeTerm ?? null);
 
   let consensusDt = $derived.by(() => {
-    if (!active) {
-      return null;
-    }
+    if (!active || !dt || !positiveTerm || !negativeTerm) return null;
 
-    return prepSentimentVsDisagreement(
-      dt,
-      termCategory,
-      judgementCategory,
-      positiveTerm,
-      negativeTerm,
-    );
+    return prepSentimentVsDisagreement(dt, {
+      a_category: termCategory,
+      b_category: judgementCategory,
+      positive_term: positiveTerm,
+      negative_term: negativeTerm,
+    });
   });
 </script>
 
@@ -78,13 +60,7 @@
 
 <div>
   {#if active}
-    <SentimentPlot
-      dt={consensusDt}
-      aCategory={termCategory}
-      bCategory={judgementCategory}
-      {positiveTerm}
-      {negativeTerm}
-    />
+    <SentimentPlot dt={consensusDt} {positiveTerm} {negativeTerm} />
   {:else}
     Please select a category and judgment category.
   {/if}

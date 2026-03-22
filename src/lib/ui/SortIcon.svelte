@@ -7,12 +7,12 @@
     sortDesc: boolean;
   } = $props();
 
-  const sortIcons = {
+  const SORT_ICONS = {
     asc: "▲",
     desc: "▼",
   };
 
-  let sortIcon = $derived(sortDesc ? sortIcons.desc : sortIcons.asc);
+  let sortIcon = $derived(sortDesc ? SORT_ICONS.desc : SORT_ICONS.asc);
 </script>
 
 {#if active}

@@ -25,40 +25,35 @@
     avg_score_column?: string;
   } = $props();
 
-  let colorScale = $state();
+  let colorScale = $state(null);
+  let active = $derived(!!colorScale);
 
-  // we just want to default the sort based on prop
-  // not update sort if prop changes (prop shouldn't change)
-  const initialSort = avg_score_column;
-  let sortColumn = $state(initialSort);
-
+  let sortColumn = $state(avg_score_column);
   let sortDesc = $state(true);
 
   let sortAqColumn = $derived(sortDesc ? aq.desc(sortColumn) : sortColumn);
   let sortedDt = $derived(dt?.orderby(sortAqColumn));
   let rows = $derived(sortedDt?.objects() ?? []);
 
-  let positiveTerm = $derived.by(() => {
-    if (!selectedJudgementTermsCategory) return null;
-    return rows[0].positive_term;
-  });
+  let firstRow = $derived(rows[0] ?? null);
 
-  let negativeTerm = $derived.by(() => {
-    if (!selectedJudgementTermsCategory) return null;
-    return rows[0].negative_term;
-  });
+  let positiveTerm = $derived(
+    selectedJudgementTermsCategory ? (firstRow?.positive_term ?? null) : null,
+  );
+
+  let negativeTerm = $derived(
+    selectedJudgementTermsCategory ? (firstRow?.negative_term ?? null) : null,
+  );
 
   let title = $derived.by(() => {
-    let title = selectedTermCategory ? selectedTermCategory : "All";
+    let title = selectedTermCategory ?? "All";
+
     if (positiveTerm && negativeTerm) {
       title += `: "${positiveTerm}" vs "${negativeTerm}"`;
     }
+
     return title;
   });
-
-  let loaded = $derived(!!colorScale);
-
-  // let dtHTML = $derived(dt.toHTML());
 
   $effect(() => {
     colorScale = createColorScale();
@@ -68,19 +63,6 @@
     [sortColumn, sortDesc] = changeSort(sortColumn, sortDesc, column);
   }
 </script>
-
-{#snippet sortHeader(columnId: string, label: string, extraClass: string = "")}
-  <th
-    scope="col"
-    class="cursor-pointer {config.theme.headingCssClasses} {extraClass}"
-    onclick={() => doChangeSort(columnId)}
-  >
-    <div>
-      {label}
-      <SortIcon active={sortColumn === columnId} {sortDesc} />
-    </div>
-  </th>
-{/snippet}
 
 <MethodologyModal>
   <p>
@@ -103,20 +85,34 @@
   </p>
 </MethodologyModal>
 
+{#snippet sortHeader(columnId: string, label: string, extraClass: string = "")}
+  <th
+    scope="col"
+    class="cursor-pointer {config.theme.headingCssClasses} {extraClass}"
+    onclick={() => doChangeSort(columnId)}
+  >
+    <div>
+      {label}
+      <SortIcon active={sortColumn === columnId} {sortDesc} />
+    </div>
+  </th>
+{/snippet}
+
 <h5 class="border-start border-4 border-primary my-4 ps-2">
   {title}
 </h5>
 
-{#if loaded}
-  <!-- {@html dtHTML} -->
+{#if active}
   <div class="table-responsive">
     <table class="table table-hover">
       <thead>
         <tr class="text-wrap text-break">
           {@render sortHeader("a_term", "Term", "text-end pe-3")}
-          {#each models as model}
+
+          {#each models ?? [] as model}
             {@render sortHeader(model.model_id, model.model_name, "angled")}
           {/each}
+
           {@render sortHeader(avg_score_column, "All Average", "angled")}
         </tr>
       </thead>
@@ -130,7 +126,7 @@
               {/if}
             </td>
 
-            {#each models as model}
+            {#each models ?? [] as model}
               <td class="text-center p-1">
                 <div
                   class="rounded hover-group"

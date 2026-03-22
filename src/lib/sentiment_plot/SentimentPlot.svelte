@@ -17,16 +17,14 @@
 
   import config from "../../config.json";
 
-  const domainMax = config.scale.sentiment.max;
-  const defaultDomainX = [-domainMax, domainMax];
-  const defaultDomainY = [-0.1, 0.35];
+  const DOMAIN_MAX = config.scale.sentiment.max;
+  const DEFAULT_DOMAIN_X: [number, number] = [-DOMAIN_MAX, DOMAIN_MAX];
+  const DEFAULT_DOMAIN_Y: [number, number] = [-0.1, 0.35];
 
-  // const labelThreshold = 0.0;
-  const plotPadding = 0.05;
-  const defaultHeight = 800;
-  const plotHeightPercentOfWindow = 0.65;
-
-  const theme = {
+  const PLOT_THEME = {
+    defaultHeight: 800,
+    heightPercentOfWindow: 0.65,
+    padding: 0.05,
     animation: {
       options: {
         duration: 400,
@@ -63,19 +61,19 @@
     positiveTerm = "good",
     negativeTerm = "evil",
   }: {
-    dt: aq.ColumnTable;
-    positiveTerm: string;
-    negativeTerm: string;
+    dt: aq.ColumnTable | null;
+    positiveTerm: string | null;
+    negativeTerm: string | null;
   } = $props();
 
-  let windowHeight = $state(defaultHeight);
-  let plotHeight = $derived(windowHeight * plotHeightPercentOfWindow);
+  let windowHeight = $state(PLOT_THEME.defaultHeight);
+  let plotHeight = $derived(windowHeight * PLOT_THEME.heightPercentOfWindow);
 
   let brush = $state({ enabled: false });
   let zoomDomainX = $state<[number, number] | null>(null);
   let zoomDomainY = $state<[number, number] | null>(null);
 
-  let points = $derived(dt ? dt.objects() : []);
+  let points = $derived(dt?.objects() ?? []);
 
   let stats = $derived.by(() => {
     if (!dt) return null;
@@ -91,38 +89,40 @@
       .object(0);
   });
 
-  let xPad = $derived(stats ? (stats.x_max - stats.x_min) * plotPadding : 0);
-  // let yPad = $derived(stats ? stats.y_max * plotPadding : 0);
-
-  // Use static domains so that different datasets are comparable
-  // let defaultDomainX = $derived(
-  //   stats ? [stats.x_min - xPad, stats.x_max + xPad] : [0, 1],
-  // );
-  // let defaultDomainY = $derived(stats ? [0, stats.y_max + yPad] : [0, 1]);
+  let xPad = $derived(
+    stats ? (stats.x_max - stats.x_min) * PLOT_THEME.padding : 0,
+  );
 
   let animatedDomainX = Tween.of(
-    () => zoomDomainX || defaultDomainX,
-    theme.animation.options,
+    () => zoomDomainX ?? DEFAULT_DOMAIN_X,
+    PLOT_THEME.animation.options,
   );
 
   let animatedDomainY = Tween.of(
-    () => zoomDomainY || defaultDomainY,
-    theme.animation.options,
+    () => zoomDomainY ?? DEFAULT_DOMAIN_Y,
+    PLOT_THEME.animation.options,
   );
 
-  const getDotColor = (d) => {
-    if (d.mean_sentiment > 0) {
-      return theme.colors.positive;
-    } else if (d.mean_sentiment < 0) {
-      return theme.colors.negative;
-    } else {
-      return theme.colors.neutral;
-    }
-  };
+  function getDotColor(d): string {
+    if (d.mean_sentiment > 0) return PLOT_THEME.colors.positive;
+    if (d.mean_sentiment < 0) return PLOT_THEME.colors.negative;
+    return PLOT_THEME.colors.neutral;
+  }
 
-  const getDotOpacity = (d) => {
-    return Math.min(1, 0.4 + Math.abs(d.mean_sentiment) / domainMax);
-  };
+  function getDotOpacity(d): number {
+    return Math.min(1, 0.4 + Math.abs(d.mean_sentiment) / DOMAIN_MAX);
+  }
+
+  function handleBrushEnd(e) {
+    if (e?.brush?.x1 !== undefined && e?.brush?.x2 !== undefined) {
+      zoomDomainX = [e.brush.x1, e.brush.x2];
+      zoomDomainY = [e.brush.y1, e.brush.y2];
+      e.brush.enabled = false;
+    } else {
+      zoomDomainX = null;
+      zoomDomainY = null;
+    }
+  }
 </script>
 
 <svelte:window bind:innerHeight={windowHeight} />
@@ -130,35 +130,28 @@
 {#if stats && points.length > 0}
   <div class="plot-wrapper">
     <Plot
-      r={{
-        domain: [0, domainMax],
-        range: [35, 8],
-      }}
+      r={{ domain: [0, DOMAIN_MAX], range: [35, 8] }}
       x={{
         domain: animatedDomainX.current,
         label: `${negativeTerm} ← mean sentiment → ${positiveTerm}`,
       }}
-      y={{
-        domain: animatedDomainY.current,
-        // flip y so positive is at the top
-        // reverse: true,
-      }}
+      y={{ domain: animatedDomainY.current }}
       height={plotHeight}
     >
-      <GridX strokeOpacity={theme.grid.strokeOpacity} />
-      <GridY strokeOpacity={theme.grid.strokeOpacity} />
+      <GridX strokeOpacity={PLOT_THEME.grid.strokeOpacity} />
+      <GridY strokeOpacity={PLOT_THEME.grid.strokeOpacity} />
 
       <RuleX
         x={0}
-        stroke={theme.stroke.color}
-        strokeDasharray={theme.rule.strokeDasharray}
-        strokeOpacity={theme.rule.strokeOpacity}
+        stroke={PLOT_THEME.stroke.color}
+        strokeDasharray={PLOT_THEME.rule.strokeDasharray}
+        strokeOpacity={PLOT_THEME.rule.strokeOpacity}
       />
       <RuleY
         y={stats.median_std}
-        stroke={theme.stroke.color}
-        strokeDasharray={theme.rule.strokeDasharray}
-        strokeOpacity={theme.rule.strokeOpacity}
+        stroke={PLOT_THEME.stroke.color}
+        strokeDasharray={PLOT_THEME.rule.strokeDasharray}
+        strokeOpacity={PLOT_THEME.rule.strokeOpacity}
       />
 
       <Text
@@ -167,8 +160,53 @@
         text={`median disagreement (${stats.median_std.toFixed(3)})`}
         dy={-5}
         textAnchor="end"
-        fill={theme.text.fill}
-        fontSize={theme.text.size}
+        fill={PLOT_THEME.text.fill}
+        fontSize={PLOT_THEME.text.size}
+      />
+
+      <!-- Quadrant labels -->
+      <Text
+        x={DEFAULT_DOMAIN_X[0]}
+        y={DEFAULT_DOMAIN_Y[1]}
+        dx={PLOT_THEME.quadrantLabel.paddingX}
+        dy={PLOT_THEME.quadrantLabel.paddingY}
+        text="negative contested"
+        fontSize={PLOT_THEME.text.size}
+        textAnchor="start"
+        fill={PLOT_THEME.text.fill}
+      />
+
+      <Text
+        x={DEFAULT_DOMAIN_X[1]}
+        y={DEFAULT_DOMAIN_Y[1]}
+        dx={-PLOT_THEME.quadrantLabel.paddingX}
+        dy={PLOT_THEME.quadrantLabel.paddingY}
+        text="positive contested"
+        fontSize={PLOT_THEME.text.size}
+        textAnchor="end"
+        fill={PLOT_THEME.text.fill}
+      />
+
+      <Text
+        x={DEFAULT_DOMAIN_X[0]}
+        y={DEFAULT_DOMAIN_Y[0]}
+        dx={PLOT_THEME.quadrantLabel.paddingX}
+        dy={-PLOT_THEME.quadrantLabel.paddingY}
+        text="negative consensus"
+        fontSize={PLOT_THEME.text.size}
+        textAnchor="start"
+        fill={PLOT_THEME.text.fill}
+      />
+
+      <Text
+        x={DEFAULT_DOMAIN_X[1]}
+        y={DEFAULT_DOMAIN_Y[0]}
+        dx={-PLOT_THEME.quadrantLabel.paddingX}
+        dy={-PLOT_THEME.quadrantLabel.paddingY}
+        text="positive consensus"
+        fontSize={PLOT_THEME.text.size}
+        textAnchor="end"
+        fill={PLOT_THEME.text.fill}
       />
 
       <Dot
@@ -183,48 +221,6 @@
         strokeWidth={1.5}
       />
 
-      <!-- Quadrant labels -->
-      <Text
-        x={defaultDomainX[0]}
-        y={defaultDomainY[1]}
-        text="negative contested"
-        dx={theme.quadrantLabel.paddingX}
-        dy={theme.quadrantLabel.paddingY}
-        fontSize={theme.text.size}
-        textAnchor="start"
-        fill={theme.text.fill}
-      />
-      <Text
-        x={defaultDomainX[1]}
-        y={defaultDomainY[1]}
-        text="positive contested"
-        dx={-theme.quadrantLabel.paddingX}
-        dy={theme.quadrantLabel.paddingY}
-        fontSize={theme.text.size}
-        textAnchor="end"
-        fill={theme.text.fill}
-      />
-      <Text
-        x={defaultDomainX[0]}
-        y={defaultDomainY[0]}
-        text="negative consensus"
-        dx={theme.quadrantLabel.paddingX}
-        dy={-theme.quadrantLabel.paddingY}
-        fontSize={theme.text.size}
-        textAnchor="start"
-        fill={theme.text.fill}
-      />
-      <Text
-        x={defaultDomainX[1]}
-        y={defaultDomainY[0]}
-        text="positive consensus"
-        dx={-theme.quadrantLabel.paddingX}
-        dy={-theme.quadrantLabel.paddingY}
-        fontSize={theme.text.size}
-        textAnchor="end"
-        fill={theme.text.fill}
-      />
-
       {#each points as point}
         <Text
           x={point.mean_sentiment}
@@ -232,7 +228,7 @@
           text={point.term}
           dx={6}
           dy={-6}
-          fontSize={theme.text.size}
+          fontSize={PLOT_THEME.text.size}
           fillOpacity={0.9}
         />
       {/each}
@@ -240,16 +236,7 @@
       <Brush
         bind:brush
         cursor={zoomDomainX ? "zoom-out" : "zoom-in"}
-        onbrushend={(e) => {
-          if (e?.brush?.x1 !== undefined && e?.brush?.x2 !== undefined) {
-            zoomDomainX = [e.brush.x1, e.brush.x2];
-            zoomDomainY = [e.brush.y1, e.brush.y2];
-            e.brush.enabled = false;
-          } else {
-            zoomDomainX = null;
-            zoomDomainY = null;
-          }
-        }}
+        onbrushend={handleBrushEnd}
       />
     </Plot>
   </div>
