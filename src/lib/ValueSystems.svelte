@@ -132,13 +132,15 @@
 
 <!-- {@html dtHTML} -->
 
+<p class="fst-italic">Hover over a result to see the non normalized score.</p>
+
 {#if loaded}
   {#each Object.entries(groupedRows) as [query, modelMap]}
-    <h5 class="border-start border-4 border-success mt-5 mb-4 ps-2">
+    <h5 class="border-start border-4 border-success my-4 ps-2">
       {query}
     </h5>
 
-    <div class="model-rank-row d-flex flex-row">
+    <div class="model-rank-row d-flex flex-row mb-5">
       {#each Object.entries(modelMap) as [model_name, rankings]}
         <div class="model-rank-card">
           <div class="card bg-body-tertiary h-100">

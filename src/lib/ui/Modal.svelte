@@ -14,13 +14,10 @@
 </script>
 
 {#if show}
-  <div
-    class="modal-backdrop fade show"
-    transition:fade={{ duration: 150 }}
-  ></div>
+  <div class="modal-backdrop show" transition:fade={{ duration: 150 }}></div>
 
   <div
-    class="modal modal-xl fade show d-block"
+    class="modal modal-lg show d-block"
     tabindex="-1"
     role="dialog"
     onclick={onclose}
