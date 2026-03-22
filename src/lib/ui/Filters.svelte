@@ -91,7 +91,7 @@
       </button>
 
       <div class="row">
-        <div class="col-7">
+        <div class="col col-lg-7">
           {#if models && selectedModels}
             <div>
               <label class="form-label {config.theme.headingCssClasses}">
