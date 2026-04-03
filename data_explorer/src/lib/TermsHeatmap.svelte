@@ -7,6 +7,7 @@
   import { createContinuousSentimentScale as createColorScale } from "./plot";
   import { changeSort, formatPercent } from "./utils";
 
+  import ExportModal from "./ui/ExportModal.svelte";
   import MethodologyModal from "./ui/MethodologyModal.svelte";
   import SortIcon from "./ui/SortIcon.svelte";
   import ScoreVal from "./ui/ScoreVal.svelte";
@@ -65,7 +66,11 @@
   let dtCSV = $derived(sortedDt?.toCSV());
 </script>
 
-<pre>{dtCSV}</pre>
+{#if dtCSV}
+  <ExportModal csv={dtCSV}>
+    <h5>{title}</h5>
+  </ExportModal>
+{/if}
 
 <MethodologyModal>
   <p>

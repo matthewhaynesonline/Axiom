@@ -9,6 +9,7 @@
   import { formatDecimal } from "./utils";
   import { groupSortKey } from "./models/model_utils";
 
+  import ExportModal from "./ui/ExportModal.svelte";
   import MethodologyModal from "./ui/MethodologyModal.svelte";
 
   let {
@@ -108,10 +109,12 @@
     colorScale = createColorScale();
   });
 
-  let dtCSV = $derived(dt?.toCSV());
+  let dtCSV = $derived(dt?.toCSV() || "");
 </script>
 
-<pre>{dtCSV}</pre>
+{#if dtCSV}
+  <ExportModal csv={dtCSV}></ExportModal>
+{/if}
 
 <MethodologyModal>
   <p>

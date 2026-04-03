@@ -6,6 +6,7 @@
   import { prepSentimentVsDisagreement } from "../plot";
 
   import SentimentPlot from "./SentimentPlot.svelte";
+  import ExportModal from "../ui/ExportModal.svelte";
   import MethodologyModal from "../ui/MethodologyModal.svelte";
 
   let {
@@ -43,7 +44,9 @@
   let consensusDtCSV = $derived(consensusDt?.toCSV());
 </script>
 
-<pre>{consensusDtCSV}</pre>
+{#if consensusDtCSV}
+  <ExportModal csv={consensusDtCSV}></ExportModal>
+{/if}
 
 <MethodologyModal>
   <p>Uses the same axis projection scores as the Sentiment Heatmap.</p>
@@ -62,7 +65,7 @@
   </p>
 </MethodologyModal>
 
-<div>
+<div class="d-inline-block w-100">
   {#if active}
     <SentimentPlot dt={consensusDt} {positiveTerm} {negativeTerm} />
   {:else}
