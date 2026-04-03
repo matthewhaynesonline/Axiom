@@ -62,7 +62,10 @@
   function doChangeSort(column: string) {
     [sortColumn, sortDesc] = changeSort(sortColumn, sortDesc, column);
   }
+  let dtCSV = $derived(sortedDt?.toCSV());
 </script>
+
+<pre>{dtCSV}</pre>
 
 <MethodologyModal>
   <p>

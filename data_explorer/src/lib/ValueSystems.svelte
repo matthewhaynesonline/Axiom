@@ -107,7 +107,11 @@
   $effect(() => {
     colorScale = createColorScale();
   });
+
+  let dtCSV = $derived(dt?.toCSV());
 </script>
+
+<pre>{dtCSV}</pre>
 
 <MethodologyModal>
   <p>

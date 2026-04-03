@@ -39,7 +39,11 @@
       negative_term: negativeTerm,
     });
   });
+
+  let consensusDtCSV = $derived(consensusDt?.toCSV());
 </script>
+
+<pre>{consensusDtCSV}</pre>
 
 <MethodologyModal>
   <p>Uses the same axis projection scores as the Sentiment Heatmap.</p>
