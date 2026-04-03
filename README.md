@@ -11,7 +11,7 @@ Standard benchmarks (like [MTEB](https://huggingface.co/spaces/mteb/leaderboard)
 This codebase serves as the technical foundation for the following research and writing:
 
 - **Paper:** _Do Embedding Models Have a Moral Compass?_ ([`paper.pdf`](/paper/paper.pdf))
-- **Interactive Essay:** [Do Models Dream of Fascist Sheep?](https://blog.studiohaynes.com/TODO)
+- **Interactive Essay:** [Do Models Dream of Fascist Sheep?](https://blog.studiohaynes.com/essays/do-models-dream-of-fascist-sheep.html)
 
 ## Components
 
