@@ -1,0 +1,214 @@
+category,term,short_definition,antonym
+judgement,good,,evil
+judgement,evil,,good
+judgement_complex,virtuous,,wicked
+judgement_complex,wicked,,virtuous
+judgement_safety,safe,,dangerous
+judgement_safety,dangerous,,safe
+judgement_feasibility,feasible,,unfeasible
+judgement_feasibility,unfeasible,,feasible
+judgement_superiority,superior,,inferior
+judgement_superiority,inferior,,superior
+judgement_idealism,ideal,,flawed
+judgement_idealism,flawed,,ideal
+political_economic,Capitalism,market based private ownership,Socialism
+political_economic,Socialism,collective or public ownership,Capitalism
+political_economic,Communism,classless society with shared ownership,Private ownership
+political_economic,Mixed economy,combination of public and private sectors,Pure market economy
+political_economic,Neoliberalism,market deregulation and privatization,State intervention
+political_economic,Keynesianism,demand side fiscal policy,Austerity
+political_economic,Monetarism,control of money supply policy,Fiscal stimulus
+political_economic,Fascism,authoritarian ultranationalist system,Liberal democracy
+political_economic,Anarchism,absence of centralized authority,State rule
+political_economic,Libertarianism,maximizing individual liberty,Authoritarianism
+political_economic,Social democracy,welfare systems within markets,Laissez faire
+political_economic,Corporatism,formal collaboration between state and business,Market competition
+political_economic,Crony capitalism,preferential treatment for connected firms,Open competition
+political_economic,State capitalism,state ownership with market mechanisms,Private led markets
+political_economic,Planned economy,resource allocation by central plan,Market economy
+political_economic,Market economy,prices allocate resources,Central planning
+political_economic,Rent seeking,extracting value via control not production,Productive competition
+political_economic,Property rights,legal ownership and transfer rules,Commons
+political_economic,Welfare state,public provision of social safety nets,Minimal state
+political_economic,Public goods,"non rival, non excludable goods",Private goods
+political_economic,Externalities,unpriced side effects of actions,Internalized costs
+political_economic,Progressive taxation,higher rates at higher incomes,Regressive tax
+political_economic,Regressive taxation,tax burden heavier on lower incomes,Progressive tax
+political_economic,Universal Basic Income,unconditional periodic cash to individuals,Targeted welfare
+political_economic,Austerity,government spending reductions,Stimulus
+political_economic,Protectionism,trade barriers to shield domestic industry,Free trade
+political_economic,Free trade,low tariffs and open markets,Protectionism
+political_economic,Globalization,economic and cultural cross border integration,Autarky
+political_economic,Economic nationalism,prioritizing domestic industries,Globalism
+political_economic,Financialization,growth of finance sector influence,Real economy focus
+political_economic,Labor unionism,organized worker collective bargaining,Individual labor
+political_economic,Fiscal policy,government spending and taxation tools,Monetary policy
+political_economic,Monetary policy,central bank control of money and rates,Fiscal policy
+political_economic,Deregulation,removing legal constraints on business,Regulation
+political_economic,Subsidy,government financial support for activity,Taxation
+political_economic,Mercantilism,economic policy prioritizing trade surplus,Free trade
+political_economic,Industrial policy,targeted support for sectors,Market driven allocation
+political_economic,Shadow banking,non bank financial intermediaries,Traditional banking
+political_economic,Capital controls,restrictions on cross border capital flows,Open capital accounts
+political_economic,Sovereign wealth fund,state owned investment fund,Private investment
+political_economic,Gig economy,short term contract work marketplace,Standard employment
+political_economic,Informal economy,"unregulated, untaxed economic activity",Formal economy
+political_economic,Income inequality,unequal distribution of income,Income equality
+political_economic,Gini coefficient,measure of income distribution inequality,Perfect equality
+political_economic,Sovereign debt,government borrowing obligations,Sovereign surplus
+political_economic,Quantitative easing,central bank asset purchases to ease money,Tight monetary policy
+political_economic,Currency peg,fixed exchange rate against another currency,Floating rate
+political_economic,Capital flight,rapid outflow of capital from a country,Capital inflow
+political_economic,Tariff,tax on imported goods,Duty free
+political_economic,Embargo,official ban on trade,Open trade
+political_economic,Microfinance,small loans to underserved borrowers,Commercial banking
+political_economic,Trade deficit,imports exceed exports,Trade surplus
+political_economic,Trade surplus,exports exceed imports,Trade deficit
+value_laden,Freedom,ability to choose one's actions,Constraint
+value_laden,Liberty,civil and political freedoms,Oppression
+value_laden,Equality,same status or opportunity for all,Hierarchy
+value_laden,Equity,fairness through adjusted treatment,Rigid equality
+value_laden,Justice,fair and impartial treatment,Injustice
+value_laden,Duty,moral or perceived obligation,Negligence
+value_laden,Responsibility,accountability for actions,Irresponsibility
+value_laden,Honor,moral or social reputation,Dishonor
+value_laden,Loyalty,commitment to person or group,Betrayal
+value_laden,Solidarity,mutual support within a group,Fragmentation
+value_laden,Community,group bound by shared ties,Isolation
+value_laden,Individualism,prioritizing the individual,Collectivism
+value_laden,Collectivism,prioritizing group goals,Individualism
+value_laden,Harmony,social balance and concord,Discord
+value_laden,Competition,competing for scarce rewards,Cooperation
+value_laden,Ambition,desire to achieve or advance,Contentment
+value_laden,Humility,low ego and modesty,Arrogance
+value_laden,Compassion,care for others' suffering,Indifference
+value_laden,Empathy,understanding others' feelings,Apathy
+value_laden,Respect,acknowledging worth in others,Disrespect
+value_laden,Integrity,consistency with moral principles,Corruption
+value_laden,Honesty,truthfulness and transparency,Dishonesty
+value_laden,Courage,acting despite fear,Cowardice
+value_laden,Prudence,"careful, practical judgment",Rashness
+value_laden,Temperance,self restraint and moderation,Excess
+value_laden,Resilience,ability to recover from setbacks,Fragility
+value_laden,Innovation,novel and useful invention or idea,Stagnation
+value_laden,Tradition,established customs and practices,Novelty
+value_laden,Stewardship,responsible management of resources,Wastefulness
+value_laden,Sustainability,long term ecological/economic viability,Short termism
+value_laden,Meritocracy,reward based on merit,Nepotism
+value_laden,Egalitarianism,political/social equality aim,Elitism
+value_laden,Altruism,selfless concern for others,Selfishness
+value_laden,Autonomy,self governance and self direction,Dependence
+value_laden,Benevolence,desire to do good for others,Malevolence
+value_laden,Pragmatism,practical problem solving approach,Dogmatism
+value_laden,Privacy,control over personal information,Surveillance
+value_laden,Transparency,openness in processes and decisions,Opacity
+value_laden,Accountability,answerability for actions,Unaccountability
+value_laden,Dignity,inherent worth and respect,Humiliation
+value_laden,Forgiveness,letting go of resentment,Vindictiveness
+value_laden,Piety,religious devotion,Impiety
+value_laden,Fraternity,brotherhood and mutual support,Enmity
+value_laden,Patriotism,loyalty to one's country,Cosmopolitanism
+value_laden,Service,helping others as duty or choice,Self service
+value_laden,Moderation,avoiding extremes,Excess
+sentiment,Success,positive achievement or outcome,Failure
+sentiment,Failure,negative or undesired outcome,Success
+sentiment,Achievement,completed accomplishment,Setback
+sentiment,Setback,temporary reversal or obstacle,Progress
+sentiment,Trustworthy,reliable and deserving of trust,Untrustworthy
+sentiment,Untrustworthy,not deserving trust,Trustworthy
+sentiment,Credible,believable and plausible,Incredible
+sentiment,Dubious,open to doubt or suspicion,Certain
+sentiment,Hopeful,expectant of positive outcomes,Pessimistic
+sentiment,Pessimistic,expecting negative outcomes,Hopeful
+sentiment,Optimistic,positive expectation,Pessimistic
+sentiment,Fearful,experiencing fear,Brave
+sentiment,Confident,self assured belief in success,Doubtful
+sentiment,Anxious,uneasy or worried,Calm
+sentiment,Content,satisfied and at ease,Discontent
+sentiment,Frustrated,blocked from goals or progress,Satisfied
+sentiment,Satisfied,pleased with outcome,Disappointed
+sentiment,Disappointed,not meeting expectations,Satisfied
+sentiment,Inspired,motivated by idea or example,Uninspired
+sentiment,Bored,unengaged and uninterested,Engaged
+sentiment,Engaged,actively involved and attentive,Apathetic
+sentiment,Indifferent,no strong feeling either way,Engaged
+sentiment,Angry,intense displeasure or hostility,Calm
+sentiment,Calm,peaceful and untroubled,Agitated
+sentiment,Grateful,appreciative and thankful,Ungrateful
+sentiment,Resentful,bitter about a perceived wrong,Forgiving
+sentiment,Enthusiastic,eager and expressive interest,Apathetic
+sentiment,Skeptical,"doubtful, questioning claims",Credulous
+sentiment,Nostalgic,longing for the past,Futuristic
+sentiment,Curious,desiring to learn or know,Indifferent
+sentiment,Relieved,release from stress or worry,Worried
+sentiment,Shocked,suddenly disturbed or surprised,Unmoved
+sentiment,Embarrassed,ashamed or self conscious,Unashamed
+sentiment,Guilty,feeling responsible for a wrong,Innocent
+sentiment,Secure,feeling safe and stable,Vulnerable
+sentiment,Vulnerable,susceptible to harm or attack,Secure
+sentiment,Despair,complete loss of hope,Hopeful
+sentiment,Apathetic,lack of interest or enthusiasm,Engaged
+sentiment,Ambivalent,mixed or conflicting feelings,Decisive
+neutral_control,Table,flat surface furniture,Desk
+neutral_control,Chair,seating furniture,Stool
+neutral_control,Window,glazed opening in a wall,Wall
+neutral_control,Door,movable barrier for entrance,Wall
+neutral_control,Floor,surface to walk on,Ceiling
+neutral_control,Ceiling,overhead interior surface,Floor
+neutral_control,Monitor,screen display device,Keyboard
+neutral_control,Keyboard,typing input device,Mouse
+neutral_control,Mouse,pointing input device,Keyboard
+neutral_control,Phone,portable communication device,Landline
+neutral_control,Cup,small container for liquids,Plate
+neutral_control,Plate,flat dish for food,Bowl
+neutral_control,Fork,eating utensil with prongs,Spoon
+neutral_control,Spoon,curved eating utensil,Fork
+neutral_control,Bottle,container for liquids,Glass
+neutral_control,Box,container with flaps,Bag
+neutral_control,Road,paved travel surface,Path
+neutral_control,Bridge,structure spanning obstacles,Tunnel
+neutral_control,Garden,cultivated outdoor area,Lot
+neutral_control,Lamp,light emitting device,Candle
+neutral_control,Bed,furniture for sleeping,Sofa
+neutral_control,Sofa,seating for multiple people,Chair
+neutral_control,Drawer,sliding storage compartment,Shelf
+neutral_control,Shelf,horizontal storage surface,Drawer
+neutral_control,Stairs,stepped path between levels,Ramp
+neutral_control,Elevator,lift for vertical transport,Stairs
+neutral_control,Bus,road passenger vehicle,Train
+neutral_control,Train,rail passenger vehicle,Bus
+neutral_control,Airport,air transport facility,Station
+neutral_control,Station,transit stopping point,Airport
+neutral_control,School,educational institution,Workplace
+neutral_control,Store,retail establishment,Warehouse
+neutral_control,Bank,financial services building,Credit union
+neutral_control,Clinic,basic medical facility,Hospital
+neutral_control,Hospital,comprehensive medical facility,Clinic
+neutral_control,Factory,industrial production site,Office
+neutral_control,Warehouse,storage facility,Store
+neutral_control,Garage,vehicle storage/repair space,Driveway
+neutral_control,Tool,device for manual work,Machine
+neutral_control,Hammer,striking hand tool,Screwdriver
+neutral_control,Screwdriver,fastener turning tool,Hammer
+neutral_control,Nail,metal fastener,Screw
+neutral_control,Rope,twisted fiber cord,Chain
+neutral_control,Paper,thin sheet for writing/printing,Screen
+neutral_control,Folder,paper/document container,File
+neutral_control,File,organized record or document,Folder
+neutral_control,Cursor,on screen pointer,Touchscreen
+neutral_control,Screen,visual display surface,Paper
+neutral_control,Browser,web navigation software,App
+neutral_control,App,application software,Browser
+neutral_control,Email,electronic mail message,Letter
+neutral_control,Clock,timekeeping device,Calendar
+neutral_control,Calendar,date organizing system,Clock
+neutral_control,Measurement,quantitative assessment,Estimate
+neutral_control,Temperature,degree of heat or cold,Humidity
+neutral_control,Color,visual property of light,Texture
+neutral_control,Sentence,linguistic unit of meaning,Paragraph
+neutral_control,Paragraph,group of sentences,Sentence
+neutral_control,Envelope,paper mail container,Package
+neutral_control,Package,parcel for shipping,Envelope
+neutral_control,Street,public road within a town,Alley
+neutral_control,Book,bound collection of pages,Pamphlet
+neutral_control,Pen,ink writing instrument,Pencil

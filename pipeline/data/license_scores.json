@@ -1,0 +1,28 @@
+{
+  "mappings": {
+    "unlicense": 1.0,
+    "wtfpl": 1.0,
+    "cc0": 1.0,
+    "mit": 1.0,
+    "isc": 1.0,
+    "bsd": 1.0,
+    "apache": 0.9,
+    "cc-by": 0.9,
+    "mpl": 0.8,
+    "lgpl": 0.7,
+    "cc-by-sa": 0.7,
+    "gpl": 0.6,
+    "llama": 0.5,
+    "gemma": 0.5,
+    "openrail": 0.5,
+    "rail": 0.5,
+    "agpl": 0.3,
+    "cc-by-nd": 0.3,
+    "cc-by-nc": 0.1,
+    "non-commercial": 0.1,
+    "nc": 0.1,
+    "research": 0.1,
+    "proprietary": 0.0
+  },
+  "default": 0.0
+}

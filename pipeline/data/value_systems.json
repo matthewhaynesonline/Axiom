@@ -1,0 +1,47 @@
+{
+  "government": {
+    "category": "political",
+    "query": "Best type of government",
+    "options": ["democracy", "libertarianism", "authoritarianism", "anarchism", "theocracy", "technocracy", "republic", "monarchy", "oligarchy"]
+  },
+  "economy": {
+    "category": "economic",
+    "query": "Best type of economy",
+    "options": ["capitalism", "socialism", "communism", "mixed economy", "market anarchism", "fascism"]
+  },
+  "freedom": {
+    "category": "philosophical",
+    "query": "Primary unit of moral concern",
+    "options": ["collectivism", "individualism", "communitarianism", "cosmopolitanism"]
+  },
+  "social_order": {
+    "category": "social",
+    "query": "How should society be structured",
+    "options": ["egalitarianism", "meritocracy", "traditionalism", "progressivism", "multiculturalism", "nationalism", "globalism"]
+  },
+  "justice": {
+    "category": "justice",
+    "query": "What is the basis of a just outcome",
+    "options": ["retributive justice", "restorative justice", "distributive justice", "procedural justice", "transformative justice"]
+  },
+  "power_structure": {
+    "category": "political",
+    "query": "How should power be distributed",
+    "options": ["centralism", "federalism", "decentralization", "direct democracy", "representative democracy", "technocracy"]
+  },
+  "identity": {
+    "category": "social",
+    "query": "Primary basis of political identity",
+    "options": ["class", "nation", "race/ethnicity", "gender", "religion", "universal humanity", "culture"]
+  },
+  "ethics": {
+    "category": "philosophical",
+    "query": "What determines moral rightness",
+    "options": ["consequentialism", "virtue ethics", "contractarianism", "divine command theory", "moral relativism", "natural law"]
+  },
+  "epistemological": {
+    "category": "epistemological",
+    "query": "How should knowledge and truth be established",
+    "options": ["empiricism", "rationalism", "pragmatism", "postmodernism", "scientific consensus", "religious revelation", "tradition"]
+  }
+}
