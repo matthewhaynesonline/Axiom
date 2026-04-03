@@ -3,7 +3,7 @@
 
   import type { ValueSystemRanking } from "./types";
 
-  import definitions from "../definitions.json";
+  import definitions from "../pipeline_export/definitions.json";
 
   import { createContinuousScale as createColorScale } from "./plot";
   import { formatDecimal } from "./utils";

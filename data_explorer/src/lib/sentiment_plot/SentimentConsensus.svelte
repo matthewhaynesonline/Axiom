@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as aq from "arquero";
 
-  import judgementCategoriesMapping from "../../judgement_categories_mapping.json";
+  import judgementCategoriesMapping from "../../pipeline_export/judgement_categories_mapping.json";
 
   import { prepSentimentVsDisagreement } from "../plot";
 
