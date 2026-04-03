@@ -142,7 +142,7 @@
     \vspace{1.2em}
   }
 
-  \abstract{Standard evaluation frameworks for embedding models, including \href{https://huggingface.co/spaces/mteb/leaderboard}{MTEB}, do not measure the implicit sentiment models assign to politically and economically charged concepts. We present \textbf{Axiom}, a multi-model semantic analysis pipeline that measures how eight embedding models, grouped by geographic and institutional origin (East, West, Academia), score political/economic, value-laden and neutral control terms across six judgment axes (\textit{good/evil}, \textit{virtuous/wicked}, \textit{safe/dangerous},   \textit{feasible/unfeasible}, \textit{superior/inferior}, \textit{ideal/flawed}). Cross-model disagreement, the standard deviation of scores across models for a given term, is treated as a primary signal rather than noise. A supplementary value systems evaluation uses direct question-answer cosine similarity to measure revealed preference rather than sentiment scoring, asking not ``is capitalism good?'' but ``when asked about economic systems, which answer does this model reach for first?'' We find that: (1) class sentiment bias appears in neutral control terms designed to contain no ideological signal; (2) models converge on ideological extremes but fracture on contested centrist concepts; (3) values associated with yielding, obligation, and deference score negatively across all groups while collective achievement values score positively; and (4) East and  West model groups diverge systematically on economic framing, value priorities, and epistemological orientation in ways that map onto documented cultural differences. The value systems evaluation reveals distinct group level inversions invisible to standard retrieval benchmarks: East and West composites rank globalism and multiculturalism in opposite positions. These findings have direct implications for search and recommendation systems built on these models and the geometric structure they expose identifies a potential attack surface for deliberate ideological encoding resistant to standard auditing approaches.}
+  \abstract{Standard evaluation frameworks for embedding models, including \href{https://huggingface.co/spaces/mteb/leaderboard}{MTEB}, do not measure the implicit sentiment models assign to politically and economically charged concepts. We present \textbf{Axiom}, a multi-model semantic analysis pipeline that measures how eight embedding models, grouped by geographic and institutional origin (East, West, Academia), score political/economic, value-laden and neutral control terms across six judgment axes (\textit{good/evil}, \textit{virtuous/wicked}, \textit{safe/dangerous}, \textit{feasible/unfeasible}, \textit{superior/inferior}, \textit{ideal/flawed}). Cross-model disagreement, the standard deviation of scores across models for a given term, is treated as a primary signal rather than noise. A supplementary value systems evaluation uses direct question-answer cosine similarity to measure revealed preference rather than sentiment scoring, asking not ``is capitalism good?'' but ``when asked about economic systems, which answer does this model reach for first?'' We find that: (1) class sentiment bias appears in neutral control terms designed to contain no ideological signal; (2) models converge on ideological extremes but fracture on contested centrist concepts; (3) values associated with yielding, obligation and deference score negatively across; and (4) East and  West model groups diverge systematically on economic framing, value priorities and epistemological orientation in ways that map onto documented cultural differences. The value systems evaluation reveals distinct group level inversions invisible to standard retrieval benchmarks: East and West composites rank globalism and multiculturalism in opposite positions. These findings have direct implications for search and recommendation systems built on these models and the geometric structure they expose identifies a potential attack surface for deliberate ideological encoding resistant to standard auditing approaches.}
 
   \metadata[Date]{\today}
   \metadata[Code]{\url{https://github.com/matthewhaynesonline/Axiom}}
@@ -203,7 +203,7 @@ The remainder of the paper is structured as follows. Section~2 surveys related w
 
 \textbf{Caliskan, Bryson \& Narayanan} \cite{caliskan2017} introduced WEAT (Word Embedding Association Test), which measures bias by comparing how strongly two sets of target words associate with two sets of attribute words in embedding space. Axiom's political/economic, value-laden, and neutral control term categories are structurally related to WEAT's target/attribute split. The key difference is that WEAT collapses results to a single aggregate across a term set; Axiom preserves per-term scores and makes cross-model disagreement the primary output, rather than a summary statistic.
 
-\textbf{May et al.} \cite{may2019} extended WEAT to contextual sentence encoders via SEAT, adapting the association test for the same class of models Axiom uses. Axiom extends this to multiple axes and multiple models simultaneously, adding cross-model disagreement as a metric SEAT does not produce. Subsequent work \cite{bommasani2020,guo2021} addressed contextual drift in these encoders by aggregating embeddings across many naturally occurring sentences before projection, deriving a stable concept vector rather than encoding a term in isolation. Axiom does not perform this aggregation step; the rationale and tradeoff are discussed in \hyperref[sec:method]{§\ref*{sec:method}}.
+\textbf{May et al.} \cite{may2019} extended WEAT to contextual sentence encoders via SEAT, adapting the association test for the same class of models Axiom uses. Axiom extends this to multiple axes and multiple models simultaneously, adding cross-model disagreement as a metric SEAT does not produce. Subsequent work \cite{bommasani2020,guo2021} addressed contextual drift in these encoders by aggregating embeddings across many naturally occurring sentences before projection, deriving a stable concept vector rather than encoding a term in isolation. Axiom does not perform this aggregation step; the rationale and tradeoff are discussed in \hyperref[sec:contextual-embed]{§\ref*{sec:contextual-embed}}.
 
 \textbf{Wolfe et al.} \cite{wolfe2022} introduced ML-EAT, which addresses WEAT's aggregation limitation by disaggregating bias scores per term and per group, and extends the approach to multilingual models. ML-EAT's cross-lingual framing directly motivates the question we ask at the model-origin level: does geographic provenance of training data produce detectable geometric divergence in the way that language does?
 
@@ -627,7 +627,7 @@ The neutral control term set was included to validate the pipeline. It revealed 
   \label{tab:neutral_controls}
 \end{table}
 
-The pattern is interpretable as a class sentiment absorbed from training corpora: concepts associated with consumption, domestic comfort, and commerce co-occur with positively framed language in large datasets more frequently than concepts associated with physical labor and manual action. Notably, the positive end is not simply ``commercial and digital'': Cup, Sofa, and Warehouse score positively alongside Store, while Clock and Mouse score negative despite their digital associations. The more defensible reading is labor and physical-action versus consumption and service. This bias is consistent across architecturally diverse models from three origin groups, ruling out model-specific artifact as an explanation.
+The pattern is interpretable as a class sentiment absorbed from training corpora: concepts associated with consumption, domestic comfort, and commerce co-occur with positively framed language in large datasets more frequently than concepts associated with physical labor and manual action. Notably, the positive end is not simply ``commercial and digital'': Cup, Sofa, and Warehouse score positively alongside Store, while Clock scores negative despite its digital associations. The more defensible reading is labor and physical action versus consumption and service. This bias is consistent across architecturally diverse models from three origin groups, ruling out model-specific artifact as an explanation.
 
 \subsection{Political Terms: Consensus at the Extremes, Disagreement at the Center}
 
@@ -655,7 +655,7 @@ Cross-model disagreement on political/economic terms is not uniformly distribute
 
 The high disagreement terms share a property: their sentiment depends heavily on political priors and carries no dominant association with historical atrocities. Progressive and Regressive taxation illustrate this directly: nearly identical disagreement scores ($0.10$), opposite sentiment and no resolution available without a prior about the role of the state. The low disagreement terms either carry overwhelming historical atrocity association across training corpora regardless of origin (Fascism), or describe phenomena with unambiguous negative framing in economic discourse (Crony capitalism), producing convergent scores.
 
-\subsection{Prosocial Values Score Negatively}
+\subsection{Value Scores Split by Obligation vs. Achievement}
 
 Several value-laden terms that normative frameworks broadly consider positive score negative or contested (Table~\ref{tab:value_terms}). The pattern is not uniform across all prosocial values: Sustainability, Solidarity, and Stewardship score among the highest in the entire value-laden category. What scores negatively are values associated with yielding, obligation, and deference rather than collective achievement or external recognition.
 
@@ -701,7 +701,7 @@ The sharpest single group level divergence: East composite ranks Globalism last 
 
 \subsubsection{Value Systems Rankings: Epistemological Orientation}
 
-East composite ranks Empiricism \#1 (trust direct observation). West and Academia rank Scientific Consensus \#1 (trust institutional validation). The distinction between trusting direct observation versus trusting institutional authority is a substantive epistemological divide that appears geometrically in models evaluated exclusively on retrieval benchmarks. This finding is not necessarily in tension with the collectivist / individualist pattern observed in value framing. The empiricism / consensus split operates on a different axis: epistemic authority rather than social organization. East models favoring empiricism reflects a preference for direct observation over institutionally validated consensus: a skepticism toward Western credentialing structures as the arbiter of legitimate knowledge that is consistent with, rather than contradicting, the broader East / West divergence pattern.
+East composite ranks Empiricism \#1 (trust direct observation). West and Academia rank Scientific Consensus \#1 (trust institutional validation). The distinction between trusting direct observation versus trusting institutional authority is a substantive epistemological divide that appears geometrically in models evaluated exclusively on retrieval benchmarks. This finding is not necessarily in tension with the collectivist / individualist pattern observed in value framing. The empiricism / consensus split operates on a different axis: epistemic authority rather than social organization. East models favoring empiricism reflects a preference for direct observation over institutionally validated consensus: this aligns with a skepticism toward Western credentialing structures as the arbiter of legitimate knowledge that is consistent with, rather than contradicting, the broader East / West divergence pattern.
 
 \subsection{The Market Anarchism Artifact}
 \label{sec:market-anarchism}
@@ -730,7 +730,7 @@ This result illustrates a general failure mode: embedding geometry can produce r
 
 \textbf{Small tilts compound across recommendation chains.} Recommendation systems make thousands of successive similarity judgments. A consistent tilt per step compounds across recommendation chains. The \texttt{std\_disagreement} metric this pipeline produces is a direct measure of that per-step tilt.
 
-\textbf{Value-scoring pipelines may penalize obligation oriented traits.} Any downstream pipeline using these embeddings to score content for prosocial value, content moderation, educational recommendation, alignment evaluation for AI systems, may systematically penalize values associated with yielding, obligation, and deference that normative human frameworks broadly consider virtuous. Collective achievement and stewardship oriented values are not similarly penalized.
+\textbf{Value-scoring pipelines may penalize yielding, obligation and deference oriented traits.} Any downstream pipeline using these embeddings to score content for prosocial value, content moderation, educational recommendation, alignment evaluation for AI systems, may systematically penalize values associated with yielding, obligation, and deference that normative human frameworks broadly consider virtuous. Collective achievement and stewardship oriented values are not similarly penalized.
 
 \subsection{Speculative: Deliberate Exploitation}
 
@@ -738,7 +738,7 @@ The geometric structure that organically encodes cultural bias from training dat
 
 Crucially, this does not require major interventions. The most effective form of ideological encoding would compress the positive signal slightly, push contested terms toward neutral and increase the distance between certain concepts and positive anchors. The result is not censorship but suppression: concepts remain in the vocabulary and are simply ranked lower. Over a large retrieval system operating at scale, this is sufficient to shape what information surfaces.
 
-Standard weight inspection cannot detect this class of attack. Geometric probing of output embedding space, the approach this pipeline takes, is one of the few practical detection methods currently available. Systematic application of this pipeline across model releases could provide an early signal for this class of manipulation.
+Standard weight inspection cannot detect this class of attack. Geometric probing of output embedding space, the approach this pipeline takes, is one of the few practical detection methods currently available. Systematic application of this pipeline across model releases could provide an early signal for this class of manipulation. Critically, this pipeline cannot distinguish deliberate encoding from organic cultural bias absorbed during training; the detection value lies in identifying geometric anomalies that warrant further investigation, not in attribution.
 
 \subsection{Dual-Use Considerations}
 
@@ -884,12 +884,12 @@ Models with asymmetric query/document encoding interfaces require separate encod
     google/embeddinggemma-300m
     & \texttt{encode\_query()}
     & \texttt{encode\_document()} \\
-    nomic-ai/nomic-embed-text-v2-moe
-    & \texttt{encode(prompt\_name="query")}
-    & \texttt{encode(prompt\_name="passage")} \\
     jinaai/jina-embeddings-v3
     & \texttt{encode(task="retrieval.query",} \texttt{prompt\_name="retrieval.query")}
     & \texttt{encode(task="retrieval.passage",} \texttt{prompt\_name="retrieval.passage")} \\
+    nomic-ai/nomic-embed-text-v2-moe
+    & \texttt{encode(prompt\_name="query")}
+    & \texttt{encode(prompt\_name="passage")} \\
     Qwen/Qwen3-Embedding-0.6B
     & \texttt{encode(prompt\_name="query")}
     & \texttt{encode()} (default) \\
