@@ -1,0 +1,892 @@
+\documentclass[11pt, letterpaper]{article}
+
+% =========================================================
+% GEOMETRY & SPACING (Modern Single Column)
+% =========================================================
+\usepackage[margin=1.25in, top=1.2in, bottom=1.2in]{geometry}
+\usepackage{setspace}
+\setstretch{1.1} % Slightly relaxed spacing for digital reading
+\usepackage{microtype}
+\usepackage[skip=10pt plus 1pt]{parskip}
+\usepackage{float}
+\usepackage{wrapfig}
+
+% =========================================================
+% FONTS & TYPOGRAPHY
+% =========================================================
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{libertine} % Standard readable serif for body
+\usepackage{tgheros} % Clean sans serif for headings (Helvetica clone)
+\usepackage{inconsolata} % Modern monospace for code/emails
+\usepackage{amsmath, amssymb}
+
+% =========================================================
+% COLOR & HYPERLINKS
+% =========================================================
+\usepackage{xcolor}
+\definecolor{primarycolor}{RGB}{85, 105, 205} % I am Jack's Cornflower Blue
+\definecolor{darkgray}{RGB}{40, 40, 40}
+\definecolor{lightgrayprimary}{RGB}{243, 243, 250}
+\definecolor{lightgrayprimarytint}{RGB}{210, 210, 225}
+% \definecolor{lightgrayyellow}{RGB}{242, 242, 237}
+
+\usepackage[
+  colorlinks=true,
+  linkcolor=primarycolor,
+  urlcolor=primarycolor,
+  citecolor=primarycolor
+]{hyperref}
+
+% =========================================================
+% LINE NUMBERS (For Review)
+% =========================================================
+\usepackage{lineno}
+\setlength{\linenumbersep}{0.6in} % Push further into the margin
+\renewcommand{\linenumberfont}{\normalfont\tiny\color{gray!25}} % Faint gray
+
+% =========================================================
+% HEADINGS STYLE
+% =========================================================
+\usepackage{titlesec}
+\titleformat{\section}{\Large\bfseries\sffamily\color{darkgray}}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries\sffamily\color{darkgray}}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\sffamily\color{darkgray}}{\thesubsubsection}{1em}{}
+
+% =========================================================
+% TABLES, FIGURES & CAPTIONS
+% =========================================================
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{makecell}
+\usepackage{caption}
+\captionsetup{labelfont={bf,sf}, font=small, labelsep=period}
+\usepackage{graphicx}
+% \usepackage{svg} % Uncomment if compiling with --shell-escape for SVGs
+
+% =========================================================
+% CUSTOM ENVIRONMENTS (Prompts & Lists)
+% =========================================================
+\usepackage[skins, breakable]{tcolorbox}
+\usepackage{enumitem}
+\usepackage{xspace}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  commentstyle=\color{gray},
+  breaklines=true,
+  frame=none
+}
+
+\lstdefinelanguage{TypeScript}{
+  keywords={
+    break, case, catch, class, const, continue, debugger, default,
+    delete, do, else, export, extends, finally, for, function, if,
+    import, in, instanceof, let, new, return, super, switch, this,
+    throw, try, typeof, var, void, while, with, yield,
+    type, interface, enum, implements, namespace, declare, abstract,
+    as, from, of, async, await, readonly, keyof, infer
+  },
+  keywordstyle=\color{primarycolor}\bfseries,
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  morestring=[b]`
+}
+
+% Callout Box
+\newenvironment{callout-box}
+{
+  \par\vspace{0.5em}
+  \begin{tcolorbox}
+    [enhanced jigsaw, breakable, colback=lightgrayprimary, colframe=lightgrayprimarytint, boxrule=0pt, arc=1mm, auto outer arc]
+  }
+  {
+  \end{tcolorbox}
+  \vspace{0.5em}\par
+}
+
+% =========================================================
+% CUSTOM METADATA & ABSTRACT COMMANDS
+% =========================================================
+\newcommand{\email}[1]{\href{mailto:#1}{\texttt{#1}}}
+\newcommand{\correspondence}[1]{\vspace{1em}\noindent\textsf{\textbf{Correspondence:}} #1\par}
+\newcommand{\metadata}[2][Metadata]{\vspace{0.2em}\noindent{\small\textsf{\textbf{#1:}} #2\par}}
+
+% Left aligned abstract with tight spacing with hidden heading
+\renewcommand{\abstract}[1]{
+  \noindent #1\par
+  \vspace{1.2em}
+}
+
+% =========================================================
+% DOCUMENT START
+% =========================================================
+\begin{document}
+
+\linenumbers
+
+% =========================================================
+% MAIN TITLE BOX
+% =========================================================
+\begin{callout-box}
+  {\raggedright
+    \vspace{0.7em}
+    {\LARGE\bfseries\sffamily\color{darkgray} Do Embedding Models Have a Moral Compass?\par}
+    \vspace{0.5em}
+    {\normalsize\bfseries\sffamily Matthew Haynes\par}
+    \vspace{0.2em}
+    {\normalsize\color{darkgray} Independent Researcher\par}
+    \vspace{1.2em}
+  }
+
+  \abstract{Standard evaluation frameworks for embedding models, including \href{https://huggingface.co/spaces/mteb/leaderboard}{MTEB}, do not measure the implicit sentiment models assign to politically and economically charged concepts. We present \textbf{Axiom}, a multi-model semantic analysis pipeline that measures how eight embedding models, grouped by geographic and institutional origin (East, West, Academia), score political/economic, value-laden and neutral control terms across six judgment axes (\textit{good/evil}, \textit{virtuous/wicked}, \textit{safe/dangerous},   \textit{feasible/unfeasible}, \textit{superior/inferior}, \textit{ideal/flawed}). Cross-model disagreement, the standard deviation of scores across models for a given term, is treated as a primary signal rather than noise. A supplementary value systems evaluation uses direct question-answer cosine similarity to measure revealed preference rather than sentiment scoring, asking not ``is capitalism good?'' but ``when asked about economic systems, which answer does this model reach for first?'' We find that: (1) class sentiment bias appears in neutral control terms designed to contain no ideological signal; (2) models converge on ideological extremes but fracture on contested centrist concepts; (3) prosocial values including Forgiveness, Humility and Empathy score negative or contested across all groups; and (4) East and West model groups diverge systematically on economic framing, value priorities, and epistemological orientation in ways that map onto documented cultural differences. The value systems evaluation reveals distinct group level inversions invisible to standard retrieval benchmarks: East and West composites rank globalism and multiculturalism in opposite positions. These findings have direct implications for search and recommendation systems built on these models and the geometric structure they expose identifies a potential attack surface for deliberate ideological encoding resistant to standard auditing approaches.}
+
+  \metadata[Date]{\today}
+  \metadata[Code]{\url{https://github.com}}
+  \metadata[Blog]{\url{https://blog.studiohaynes.com}}
+  \vspace{0.5em}
+\end{callout-box}
+
+% =========================================================
+\section{Introduction}
+% =========================================================
+
+Embedding models are central to modern machine learning and AI systems. Their performance is well characterized and evaluated on retrieval and semantic similarity benchmarks, with the field having converged on standardized leaderboards for selecting production grade models. What these benchmarks do not measure is the implicit sentiment embedding models assign to politically, economically, and morally loaded concepts: that ``fascism'' lands closer to ``evil'' than to ``good'' or that ``forgiveness'' may land closer to ``weakness'' than to ``virtue'' depending on the model.
+
+This sentiment structure matters because embedding models underpin search engines, recommendation systems, content ranking pipelines, and, increasingly, alignment evaluation for generative AI systems. A model that assigns subtly different positions to ``deregulation'' or ``sovereignty'' relative to ``good'' and ``ideal'' will produce different rankings for queries, not through any explicit filtering, but through the ordering that results naturally from similarity scoring. Nothing is outright blocked or flagged; the effect operates silently through rank ordering.
+
+The observation that embedding models encode human biases as geometric structure is well established, with roots in Osgood et al.'s (1957) semantic differential framework and computational formalization by Bolukbasi et al.\ (2016) and Caliskan et al.\ (2017). What is not established is whether models trained on corpora from different geographic and institutional origins encode political and economic concepts differently, whether cross-model disagreement on a term is itself a meaningful signal about that term's cultural sensitivity and what the measured biases imply for downstream systems.
+
+This paper makes four contributions:
+
+\begin{enumerate}
+  \item \textbf{Cross-model disagreement as a primary signal.} We treat the standard deviation of axis projection scores across models as primary data rather than noise. High disagreement on a term indicates geometric instability: a candidate for cultural contestation or training data sensitivity. This framing has no direct precedent in the cited literature to the author's knowledge, all of which works within a single model or corpus.
+
+  \item \textbf{Model origin as an experimental variable.} We group models by geographic and institutional origin and test whether that grouping predicts systematic divergence in how political and economic concepts are encoded. Prior work asks \textit{what} culture encodes; we ask \textit{whose}.
+
+  \item \textbf{Six parallel semantic axes against a structured term set.} Running multiple judgment axes simultaneously against the same term categories produces a richer and more robust picture than any single-axis analysis, and allows averaging across axes to reduce sensitivity to any one axis pair behaving unexpectedly.
+
+  \item \textbf{A dual-method evaluation design.} Axis projection scoring measures how close a term sits to ``good'' versus ``evil'' in embedding space. A supplementary value systems evaluation uses direct question-answer cosine similarity to measure something different: not whether a concept reads as positive, but which concept a model reaches for first when asked a question like ``what is the best type of economy?''. The two methods are complementary: axis projection reveals tilts across the full term set; value systems ranking reveals preference ordering.
+
+\end{enumerate}
+
+The remainder of the paper is structured as follows. Section~2 surveys related work. Section~3 provides background on techniques. Section~4 describes the pipeline methodology. Section~5 covers experimental setup. Section~6 presents results. Section~7 discusses implications, limitations and dual-use considerations. Section~8 concludes.
+
+% =========================================================
+\section{Related Work}
+% =========================================================
+
+\subsection{Historical Grounding}
+
+\textbf{Osgood, Suci \& Tannenbaum (1957)} introduced the Semantic Differential scale, a method for measuring the psychological meaning of concepts by asking human subjects to rate them on a series of seven-point scales anchored by bipolar adjectives: good/bad, strong/weak, active/passive. The insight was that meaning could be mapped as coordinates in a space defined by opposing poles. All of the work below is, at some level, a descendant of this. Axiom's judgment pairs (\textit{good/evil}, \textit{ideal/flawed}, \textit{superior/inferior}) are semantic differentials operationalized in embedding space.
+
+\subsection{The Geometric Foundation}
+
+\textbf{Mikolov et al.\ (2013)} introduced Word2Vec, demonstrating that dense vector representations of words trained on large corpora capture complex syntactic and semantic relationships as linear structure. The now canonical example, \texttt{vector(``King'')} $-$ \texttt{vector(``Man'')} $+$ \texttt{vector(``Woman'')} $\approx$ \texttt{vector(``Queen'')}, established that geometric operations on embeddings correspond to meaningful conceptual operations. This is the mathematical foundation that makes axis projection possible.
+
+\textbf{Bolukbasi et al.\ (2016)} formalized the axis construction operation: subtracting opposing word vectors isolates a directional axis representing a concept, and human social biases are encoded in the resulting structure. The \texttt{axis = positive\_embedding - negative\_embedding} operation at the core of Axiom's scoring pipeline is a direct application of this technique, extended from static Word2Vec embeddings to modern Sentence Transformers.
+
+\textbf{Kozlowski et al.\ (2019)} applied vector projection to sociological concept mapping, tracing how cultural beliefs about class are geometrically encoded across 100 years of historical text. This is the closest prior work in Axiom's domain, political and economic concepts analyzed through embedding geometry, with one key difference: it uses a single model and a single corpus. Our contribution is the cross-model, cross-origin comparison.
+
+\subsection{Formalizing Semantic Axes}
+
+\textbf{An et al.\ (2018)} formalized Bolukbasi's vector subtraction into SemAxis, a general framework for scoring words on arbitrary antonym-defined axes beyond simple positive/negative sentiment. Axiom's multi-axis design, six judgment axes run in parallel, directly parallels SemAxis, extended to modern Sentence Transformer embeddings and a cross-model comparison setting.
+\newpage
+\textbf{Mathew et al.\ (2020)} introduced POLAR, which transforms pre-trained embeddings into an interpretable multi-dimensional space defined by semantic opposites, explicitly bridging Osgood's 1957 psychometric framework with modern NLP. Axiom's \texttt{AXIS\_PAIRS} structure is analogous to POLAR's multi-dimensional polar space, though we operate on Sentence Transformer output embeddings and use the axes for cross-model comparison rather than interpretable re-encoding.
+
+\textbf{Grand et al.\ (2022)} provide the most direct methodological precedent for our scoring approach, demonstrating that projecting word vectors onto antonymous anchor axes recovers human judgments about object properties across multiple feature types and multiple models. We apply the same operation to political and economic terms, adding cross-model disagreement as a signal and model origin as an experimental variable.
+
+\subsection{Bias Measurement Frameworks}
+
+\textbf{Caliskan, Bryson \& Narayanan (2017)} introduced WEAT (Word Embedding Association Test), which measures bias by comparing how strongly two sets of target words associate with two sets of attribute words in embedding space. Axiom's political/economic, value-laden, and neutral control term categories are structurally related to WEAT's target/attribute split. The key difference is that WEAT collapses results to a single aggregate across a term set; Axiom preserves per-term scores and makes cross-model disagreement the primary output, rather than a summary statistic.
+
+\textbf{May et al.\ (2019)} extended WEAT to contextual sentence encoders via SEAT, adapting the association test for the same class of models Axiom uses. Axiom extends this to multiple axes and multiple models simultaneously, adding cross-model disagreement as a metric SEAT does not produce. Subsequent work (Bommasani et al., 2020; Guo \& Caliskan, 2021) addressed contextual drift in these encoders by aggregating embeddings across many naturally occurring sentences before projection, deriving a stable concept vector rather than encoding a term in isolation. Axiom does not perform this aggregation step; the rationale and tradeoff are discussed in \S4.
+
+\textbf{Wolfe et al.\ (2022)} introduced ML-EAT, which addresses WEAT's aggregation limitation by disaggregating bias scores per term and per group, and extends the approach to multilingual models. ML-EAT's cross-lingual framing directly motivates the question we ask at the model-origin level: does geographic provenance of training data produce detectable geometric divergence in the way that language does?
+
+\subsection{Representation Engineering (RepE)}
+
+\textbf{Zou et al.\ (2023)} demonstrated that high-level concepts exist as linear directions in a generative model's internal activations and that identifying those directions via contrastive pairs enables steering model behavior. Axiom applies the same contrastive logic but operates on Sentence Transformer output embeddings and is focused on measurement rather than behavioral steering. The structure Axiom measures in output embeddings is a surface expression of the same internal representations that RepE probes and manipulates, the difference is one of intent and layer depth.
+
+% \newpage
+
+% =========================================================
+\section{Background}
+% =========================================================
+
+\subsection{Semantic Axis Projection}
+
+Given a Sentence Transformer model $f$ that maps text to unit-normalized vectors in $\mathbb{R}^d$ and a semantic axis defined by a positive pole term $p$ and a negative pole term $n$, the axis vector is:
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[t]{0.25\textwidth}
+    \vspace{0pt}
+    \textbf{Formula}
+    \[
+      \mathbf{a} = \frac{f(p) - f(n)}{\|f(p) - f(n)\|}
+    \]
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.65\textwidth}
+    \vspace{0pt}
+    \textbf{Implementation}
+\begin{lstlisting}[language=Python]
+axis = positive_embedding - negative_embedding
+axis_norm = np.linalg.norm(axis)
+axis = axis / axis_norm
+\end{lstlisting}
+
+  \end{minipage}
+  \caption{Axis vector construction: formula and implementation.}
+  \label{fig:axis_construction}
+\end{figure}
+
+The projection score for a term $t$ onto this axis is:
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[t]{0.25\textwidth}
+    \vspace{0pt}
+    \textbf{Formula}
+    \[
+      s(t) = f(t) \cdot \mathbf{a}
+    \]
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.65\textwidth}
+    \vspace{0pt}
+    \textbf{Implementation}
+\begin{lstlisting}[language=Python]
+projections = a_embeddings @ axis
+\end{lstlisting}
+
+  \end{minipage}
+  \vspace{2pt}
+  \caption{Axis projection: formula and implementation.}
+  \label{fig:axis_projection}
+\end{figure}
+
+Since $f(t)$ is unit-normalized, this is equivalent to the cosine similarity between the term embedding and the axis direction. A score near $+1$ indicates strong alignment with the positive pole; near $-1$ indicates alignment with the negative pole; near $0$ indicates orthogonality, the model treats the term as unrelated to the axis.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.55\textwidth]{assets/up/axis-projection.png}
+  \caption{Axis projection visualization.}
+  \label{fig:background_axis_projection_image}
+\end{figure}
+
+This operation replaces two independent proximity measurements (similarity to $p$ and similarity to $n$ separately) with a single coherent directional score. Terms that sit near both poles simultaneously, which would produce ambiguous results under independent similarity scoring, are handled robustly because the axis captures the net direction from negative to positive.
+
+\subsection{Score Normalization}
+
+Raw projection scores are not directly comparable across models with different score distributions. Two normalization steps are applied.
+
+\subsubsection{Z-score normalization}
+
+Recenters each model's scores to zero mean and unit standard deviation:
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[t]{0.45\textwidth}
+    \vspace{0pt}
+    \textbf{Formula}
+    \[
+      z(s) = \frac{s - \mu}{\sigma}
+    \]
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.50\textwidth}
+    \vspace{0pt}
+    \textbf{Implementation}
+\begin{lstlisting}[language=Python]
+std = arr.std()
+(arr - arr.mean()) / std
+\end{lstlisting}
+
+  \end{minipage}
+  \caption{Z-score normalization: formula and implementation.}
+  \label{fig:z_score}
+\end{figure}
+
+% \newpage
+
+\subsubsection{Tanh scaling}
+
+Applied after z-scoring to compress outliers without hard clipping:
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[t]{0.45\textwidth}
+    \vspace{0pt}
+    \textbf{Formula}
+    \[
+      \hat{s} = \frac{\tanh(z \cdot \lambda)}{2}
+    \]
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.50\textwidth}
+    \vspace{0pt}
+    \textbf{Implementation}
+\begin{lstlisting}[language=Python]
+z = zscore_np(arr)
+np.tanh(z * scale) / 2
+\end{lstlisting}
+
+  \end{minipage}
+  \caption{Tanh scaling: formula and implementation.}
+  \label{fig:tanh}
+\end{figure}
+
+where $\lambda = 0.6$ by default.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.55\textwidth]{assets/up/tanh.png}
+  \caption{Tanh scaling visualization.}
+  \label{fig:background_tanh_image}
+\end{figure}
+
+This maps all values into the open interval $(-0.5, +0.5)$ with an S-shaped response: values near zero pass through nearly unchanged, while extreme values are compressed toward the boundary without reaching it. This prevents a single outlier term from anchoring one end of the scale and collapsing the resolution of all other terms, a failure mode that occurs with z-score followed by min-max normalization when one term dominates the range.
+
+% \newpage
+
+\subsection{Composite Scoring}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{assets/up/heatmap.png}
+  \caption{Axiom heatmap of political and economic terms composite scores.}
+  \label{fig:background_heatmap_image}
+\end{figure}
+
+Six axis pairs are evaluated in parallel for each term-model combination. A composite score is computed by averaging the normalized projection scores across all six axes:
+
+\begin{figure}[H]
+
+
+  \textbf{Formula}
+  \[
+    s_{\text{composite}}(t, m) = \frac{1}{6} \sum_{k=1}^{6} \hat{s}_k(t, m)
+  \]
+
+  \textbf{Implementation}
+\begin{lstlisting}[language=Python]
+# Individual Model Grand Averages
+avg_judgement_df = (
+  axis_df
+    .group_by("a_term", "a_category", "model_id", "group")
+    .agg(pl.col("score_axis").mean())
+    .with_columns(pl.lit(v).alias(k) for k, v in COMPOSITE_COLS.items())
+    .select(axis_df.columns)
+)
+
+# Group Category Specific Averages
+avg_group_cat_df = (
+    axis_df
+    .group_by("a_term", "a_category", "b_category", "positive_term", "negative_term", "group")
+    .agg(pl.col("score_axis").mean())
+    .with_columns(pl.format("composite_{}", pl.col("group")).alias("model_id"))
+    .select(axis_df.columns)
+)
+\end{lstlisting}
+
+  \caption{Composite scoring: formula and implementation.}
+  \label{fig:composite}
+\end{figure}
+
+This reduces sensitivity to idiosyncratic behavior in any single axis pair and provides a more stable summary of each model's overall sentiment assignment for a given term.
+
+\newpage
+
+\subsection{Cross-Model Disagreement}
+
+For each term $t$, the cross-model disagreement is the standard deviation of scores across all $M$ models:
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[t]{0.35\textwidth}
+    \vspace{0pt}
+    \textbf{Formula}
+    \[
+      \sigma_t = \sqrt{\frac{1}{M}\sum_{i=1}^{M}(\hat{s}(t, m_i) - \bar{s}_t)^2}
+    \]
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.60\textwidth}
+    \vspace{0pt}
+    \textbf{Implementation}
+\begin{lstlisting}[language=Python]
+// Companion app code
+dt.groupby({ term: (d) => d.a_term })
+  .rollup({
+    mean_sentiment: (d) => aq.op.mean(
+      d.score_axis
+    ),
+    std_disagreement: (d) => aq.op.stdevp(
+      d.score_axis
+    ),
+  })
+\end{lstlisting}
+
+  \end{minipage}
+  \caption{Cross-model disagreement: formula and implementation.}
+  \label{fig:cross_model}
+\end{figure}
+
+Low $\sigma_t$ indicates consensus. High $\sigma_t$ indicates geometric instability: the term's position relative to the sentiment axis varies substantially across models, suggesting the concept is culturally contested, underspecified, or sensitive to training data composition.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{assets/up/scatter.png}
+  \caption{Axiom scatter plot of sentiment and consensus of political and economic terms composite scores.}
+  \label{fig:background_scatter_plot_image}
+\end{figure}
+
+\newpage
+
+\subsection{Value Systems Scoring}
+
+A separate evaluation uses a distinct scoring method. For a question $q$ with candidate answers $\{a_1, \ldots, a_k\}$, the score for each answer is:
+
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[t]{0.17\textwidth}
+    \vspace{0pt}
+    \textbf{Formula}
+    \[
+      r(a_i) = f(q) \cdot f(a_i)
+    \]
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{0.77\textwidth}
+    \vspace{0pt}
+    \textbf{Implementation}
+\begin{lstlisting}[language=Python]
+scores = (option_embeddings @ query_embedding[0]).astype(float)
+s_min, s_max = scores.min(), scores.max()
+scores_norm = (scores - s_min) / (s_max - s_min) if s_max > s_min else np.zeros_like(scores)
+ranked_indices = np.argsort(scores_norm)[::-1]
+\end{lstlisting}
+
+  \end{minipage}
+  \caption{Value Systems Ranking: formula and implementation.}
+  \label{fig:value_systems}
+\end{figure}
+
+Scores are min-max normalized within each model so rankings are comparable across questions with different numbers of options.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{assets/up/value-systems.png}
+  \caption{Axiom Value Systems Rankings.}
+  \label{fig:background_value_systems_image}
+\end{figure}
+
+This measures revealed preference: not ``is capitalism good?'' relative to a judgment axis, but ``when asked about economic systems, which answer does this model place geometrically closest to the question?'' The method is more direct than axis projection for structured choice questions but produces scores that are not comparable to axis projection scores and should not be interpreted as sentiment.
+
+\newpage
+
+% =========================================================
+\section{Method}
+% =========================================================
+
+\subsection{Pipeline Overview}
+
+The pipeline consists of four stages: embedding precomputation, axis projection scoring, normalization and aggregation. All stages operate over the same term set and model set, producing a score matrix of shape $(\text{terms} \times \text{models})$ per axis pair, which is then composited and analyzed.
+
+For each model, embeddings are precomputed in a single batched pass per term category and cached keyed on \texttt{(model\_id, category)}. This avoids redundant encoding across the multiple axis pairs that query the same term sets. Models with asymmetric query/document encoding functions, such as \href{https://huggingface.co/google/embeddinggemma-300m#prompt-instructions}{EmbeddingGemma}, use separate encoding functions for assessment terms (encoded as documents) and judgment axis terms (encoded as queries), consistent with each model's intended usage.
+
+For each combination of assessment category, judgment axis pair and model, the pipeline retrieves precomputed embeddings, computes the unit-normalized axis vector, projects each assessment term embedding onto the axis via dot product and applies z-score normalization followed by tanh scaling.
+
+An alternative scoring strategy is described in Appendix A; all reported results use axis projection.
+
+\subsection{Contextual Embeddings and the Aggregation Tradeoff}
+
+The Sentence Transformer models used here produce contextual embeddings: the vector for ``capitalism'' encoded in isolation is not identical to ``capitalism'' encoded inside a sentence. Earlier bias measurement work on raw contextual encoders addressed this by aggregating embeddings across thousands of naturally occurring sentences to derive a stable concept vector before projecting onto axes (Bommasani et al., 2020; Guo \& Caliskan, 2021). We do not perform this aggregation step.
+
+This is a defensible tradeoff for three reasons. First, the models used are Sentence Transformer fine-tuned, meaning contrastive training has already stabilized the embedding space for short-input comparison (Reimers \& Gurevych, 2019). Second, the political and economic terms in the dataset are largely monosemous: ``fascism'' does not carry a competing colloquial sense that would shift its embedding meaningfully depending on context. Third, axis projection uses the same contextual encoding for both the pole embeddings and the assessment term embeddings, meaning any systematic contextual offset partially cancels across the subtraction. For genuinely polysemous terms, ``Anarchism'' carrying both a political-theory sense and a colloquial-chaos sense, for example, contextual aggregation could shift the embedding meaningfully. The Market Anarchism result in \hyperref[sec:market-anarchism]{§\ref*{sec:market-anarchism}} is a plausible example of this limitation in practice.
+
+Cross-model consistency across eight architecturally diverse models serves as the primary robustness check in place of aggregation.
+
+\subsection{Aggregation and Composite Groups}
+
+Per-model scores are aggregated into three composite group scores by averaging within each origin group (East, West, Academia) and into an overall average across all models. The companion data explorer surfaces results across five views: a sentiment heatmap (terms $\times$ models), a sentiment vs.\ disagreement scatter plot, a per-term breakdown table, value systems rankings, and a model reference table.
+
+\newpage
+
+% =========================================================
+\section{Experiments}
+% =========================================================
+
+\subsection{Models}
+
+Eight Sentence Transformer models spanning three origin groups were evaluated:
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    Group & Model ID & Parameters \\
+    \midrule
+    East & Alibaba-NLP/gte-multilingual-base & 305M \\
+    East & Qwen/Qwen3-Embedding-0.6B & 600M \\
+    West & google/embeddinggemma-300m & 300M \\
+    West & ibm-granite/granite-embedding-278m-multilingual & 278M \\
+    West & jinaai/jina-embeddings-v3 & 570M \\
+    West & nomic-ai/nomic-embed-text-v2-moe & 475M \\
+    Academia & sentence-transformers/all-MiniLM-L6-v2 & 22M \\
+    Academia & sentence-transformers/all-mpnet-base-v2 & 109M \\
+    \bottomrule
+  \end{tabular}
+  \caption{Models evaluated in the experiment.}
+  \label{tab:models}
+\end{table}
+
+Group assignment uses geographic and institutional origin as a proxy for training corpus composition. This is an imperfect proxy: IBM Granite is a US company with multilingual training data; Alibaba is a Chinese company trained on multilingual corpora. Origin is not a direct measure of corpus composition and findings should be interpreted accordingly.
+
+\subsection{Term Sets}
+
+Three term categories were evaluated:
+
+\textbf{Political/economic} (60 terms): Economic systems (Capitalism, Socialism, Communism, Fascism, Mixed economy, Market anarchism), policy mechanisms (Deregulation, Subsidy, Austerity, Quantitative easing), and economic phenomena (Income inequality, Trade deficit, Rent seeking, Shadow banking).
+
+\textbf{Value-laden} (40 terms): Concepts drawn from secular and religious traditions, including virtues (Forgiveness, Humility, Integrity, Empathy, Piety), values (Liberty, Accountability, Service, Stewardship, Fraternity), and contested concepts (Competition, Individualism, Collectivism).
+
+\textbf{Neutral control} (30 terms): Physical tools (Hammer, Screwdriver, Nail, Rope), furniture and household objects (Table, Chair, Window), and common commercial and digital concepts (Store, App, Bank). Included to validate pipeline calibration; neutral controls should produce near-zero scores.
+
+\newpage
+
+\subsection{Judgment Axes}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    Axis & Positive Pole & Negative Pole \\
+    \midrule
+    General Judgment & good & evil \\
+    Complex Judgment & virtuous & wicked \\
+    Safety & safe & dangerous \\
+    Feasibility & feasible & unfeasible \\
+    Superiority & superior & inferior \\
+    Idealism & ideal & flawed \\
+    \bottomrule
+  \end{tabular}
+  \caption{Judgment axes used for semantic projection.}
+  \label{tab:axes}
+\end{table}
+
+\subsection{Value Systems Questions}
+
+A separate evaluation assessed model preference ordering across structured questions with enumerated options: e.g.\ ``Best type of economy'' (Capitalism, Socialism, Communism, Fascism, Mixed economy, Market anarchism, Market economy) and ``How should knowledge and truth be established'' (Empiricism, Scientific consensus, Rationalism, Religious revelation, Pragmatism, Postmodernism, Intuition). Scoring used direct cosine similarity between question and answer embeddings, with min-max normalization per question.
+
+\subsection{Baselines}
+
+There are no established baselines for this exact task. Results are analyzed relative to: (1) the neutral control term set, which provides a within-experiment calibration; and (2) the cross-model mean and standard deviation, which allow individual term and group scores to be interpreted relative to the full distribution.
+
+\subsection{Implementation}
+
+The pipeline is implemented in Python using \href{https://github.com/huggingface/sentence-transformers}{Sentence Transformers}, \href{https://github.com/pola-rs/polars}{Polars}, and \href{https://github.com/numpy/numpy}{NumPy}. Embeddings are precomputed per category in batched passes and cached in memory keyed on \texttt{(model\_id, category)}. Scores are exported as \href{https://arrow.apache.org}{Apache Arrow} IPC files for consumption by a companion interactive data explorer built in \href{https://github.com/sveltejs/svelte}{Svelte} with \href{https://github.com/uwdata/arquero}{Arquero} for in browser data manipulation.
+
+\newpage
+
+% =========================================================
+\section{Results}
+% =========================================================
+
+\subsection{Neutral Controls Reveal Class Bias}
+
+The neutral control term set was included to validate the pipeline. It revealed an unintended finding instead. Physical labor tools score consistently negative across all eight models (Table~\ref{tab:neutral_controls}), with cross-model disagreement low enough to rule out model specific artifacts.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Term} & \textbf{Mean Score} & \textbf{Std (Disagreement)} \\
+    \midrule
+    Store       & $+0.22$ & $0.07$ \\
+    App         & $+0.11$ & $0.09$ \\
+    Bank        & $+0.08$ & $0.12$ \\
+    Table       & $+0.04$ & $0.07$ \\
+    Rope        & $-0.09$ & $0.09$ \\
+    Nail        & $-0.18$ & $0.10$ \\
+    Screwdriver & $-0.19$ & $0.09$ \\
+    Hammer      & $-0.23$ & $0.05$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Selected neutral control term scores (composite across six axes,
+  all-model average).}
+  \label{tab:neutral_controls}
+\end{table}
+
+The pattern is interpretable as a class sentiment absorbed from training corpora: commercial and digital concepts co-occur with positively framed language in large datasets more frequently than manual and physical concepts do. This bias is consistent across architecturally diverse models from three origin groups, ruling out model-specific artifact as an explanation.
+
+\subsection{Political Terms: Consensus at the Extremes, Disagreement at the Center}
+
+Cross-model disagreement on political/economic terms is not uniformly distributed. Ideologically extreme terms show low disagreement; contested centrist terms show high disagreement (Table~\ref{tab:political_terms}).
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Term} & \textbf{Mean Score} & \textbf{Std (Disagreement)} \\
+    \midrule
+    Free Trade       & $+0.17$ & $0.04$ \\
+    Market Economy   & $+0.06$ & $0.03$ \\
+    Corporatism      & $-0.02$ & $0.12$ \\
+    Communism        & $-0.05$ & $0.07$ \\
+    Deregulation     & $-0.14$ & $0.15$ \\
+    Fascism          & $-0.21$ & $0.04$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Political/economic terms by cross-model disagreement (composite
+  judgment, selected).}
+  \label{tab:political_terms}
+\end{table}
+
+The high disagreement terms share a property: their sentiment depends heavily on political priors and carries no dominant association with historical atrocities. The low disagreement terms, e.g., Fascism, carries overwhelming historical atrocity association across training corpora regardless of origin, producing convergent negative scores.
+
+\subsection{Prosocial Values Score Negatively}
+
+Several value-laden terms that normative frameworks broadly consider positive score negative or contested (Table~\ref{tab:value_terms}).
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Term} & \textbf{Mean Score} & \textbf{Std (Disagreement)} \\
+    \midrule
+    Meritocracy    & $+0.08$ & $0.05$ \\
+    Liberty        & $+0.08$ & $0.09$ \\
+    Piety          & $-0.05$ & $0.12$ \\
+    Empathy        & $-0.06$ & $0.12$ \\
+    Humility       & $-0.12$ & $0.06$ \\
+    Competition    & $-0.13$ & $0.06$ \\
+    Forgiveness    & $-0.14$ & $0.11$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Selected value-laden terms (composite judgment, all-model average).}
+  \label{tab:value_terms}
+\end{table}
+
+Forgiveness is both one of the most geometrically contested value-laden terms and negative on average. The most plausible explanation is that yielding and submissive traits cluster near weakness and inferiority rather than virtue and strength, a result of co-occurrence patterns in training text rather than any deliberate design choice.
+
+\subsection{East / West Group Divergence}
+
+\subsubsection{Economic Framing}
+
+East composite models score state involved economic concepts higher relative to West composites: Planned economy, Subsidy, and Sovereign debt all score measurably higher in the East composite. West composites are more favorable toward market mechanism terms. Neither group is extreme; both occupy a plausible centrist range with consistent directional disagreement about which flavor of centrism reads as more positive.
+
+\subsubsection{Value Framing}
+
+West composite models score individualistic and accountability oriented values higher (Liberty, Freedom, Accountability, Innovation, Integrity, Prudence). East composite models score social cohesion values higher (Service, Stewardship, Fraternity, Piety, Empathy). This pattern maps onto individualism/collectivism axes documented in cross-cultural research.
+
+\subsubsection{Value Systems Rankings: Group Level Inversions}
+
+The sharpest single group level divergence: East composite ranks Globalism last (\#7) and Multiculturalism \#3. West composite ranks Multiculturalism last (\#7) and Globalism \#4. A reversal on two closely related concepts.
+
+\subsubsection{Value Systems Rankings: Epistemological Orientation}
+
+East composite ranks Empiricism \#1 (trust direct observation). West and Academia rank Scientific Consensus \#1 (trust institutional validation). The distinction between trusting direct observation versus trusting institutional authority is a substantive epistemological divide that appears geometrically in models evaluated exclusively on retrieval benchmarks.
+
+\subsection{The Market Anarchism Artifact}
+\label{sec:market-anarchism}
+
+Across value systems economy rankings, every group ranks Mixed economy \#1. West and Academia composites both rank Market anarchism in the top 3, above Socialism. This is almost certainly an artifact: ``market'' carries strong positive associations in all training corpora, and ``anarchism'' clusters near decentralization and autonomy. The combination produces a high composite score without a coherent ideological reading.
+
+This result illustrates a general failure mode: embedding geometry can produce ranking outputs that resemble findings but are compositional accidents. Downstream consumers should cross check surprising outputs against an interpretable mechanistic explanation before treating them as ideological signal.
+
+\newpage
+
+% =========================================================
+\section{Discussion}
+% =========================================================
+
+\subsection{Demonstrated Implications}
+
+\textbf{Standard benchmarks do not detect these biases.} The biases measured here are invisible to \href{https://huggingface.co/spaces/mteb/leaderboard}{MTEB} and other retrieval evaluation frameworks. A model can achieve state of the art benchmark scores and encode all of the biases described above. This is a concrete gap in current model auditing practice, not a theoretical concern.
+
+\textbf{The biases are coherent, not random.} East/West divergences are consistent across multiple model representatives within each group, survive across six independent semantic axes and produce interpretable patterns that map onto documented cultural differences.
+
+\textbf{Neutral baselines are unreliable validators.} The class sentiment finding in the control term set is a practical warning for any methodology relying on ideologically neutral baseline terms: the baseline may carry implicit biases of its own.
+
+\subsection{Plausible Downstream Effects}
+
+\textbf{Retrieval systems inherit geometric tilts.} A search or recommendation engine built on an East origin embedding model will produce systematically different rankings than one built on a West origin model for queries involving politically or economically loaded concepts; not because any content is filtered but because similarity scores are geometrically tilted.
+
+\textbf{Small tilts compound across recommendation chains.} Recommendation systems make thousands of successive similarity judgments. A consistent tilt per step compounds across recommendation chains. The \texttt{std\_disagreement} metric this pipeline produces is a direct measure of that per-step tilt.
+
+\textbf{Value-scoring pipelines may penalize prosocial traits.} Any downstream pipeline using these embeddings to score content for prosocial value, content moderation, educational recommendation, alignment evaluation for AI systems, may systematically penalize traits that normative human frameworks consider virtuous.
+
+\subsection{Speculative: Deliberate Exploitation}
+
+The geometric structure that organically encodes cultural bias from training data could also be deliberately encoded. A sophisticated actor with influence over training data composition, through coordinated web content, state media operations, or manipulation of large crawled datasets, could shift geometric relationships between politically sensitive concepts without modifying model architecture or weights. Attribution would be nearly impossible.
+
+Crucially, this does not require major interventions. The most effective form of ideological encoding would compress the positive signal slightly, push contested terms toward neutral and increase the distance between certain concepts and positive anchors. The result is not censorship but suppression: concepts remain in the vocabulary and are simply ranked lower. Over a large retrieval system operating at scale, this is sufficient to shape what information surfaces.
+
+Standard weight inspection cannot detect this class of attack. Geometric probing of output embedding space, the approach this pipeline takes, is one of the few practical detection methods currently available. Systematic application of this pipeline across model releases could provide an early signal for this class of manipulation.
+
+\subsection{Dual-Use Considerations}
+
+The methodology that detects ideological encoding can also be used to calibrate it: a published detection pipeline provides a benchmark that could verify a poisoning attack worked or tune it to fall below detection thresholds (Goodhart, 1975). This is a genuine dual-use concern, analogous to vulnerability disclosure in security research.
+
+\subsection{Limitations}
+
+The findings are correlational and descriptive. Demonstrating geometric divergence does not establish that the differences cause measurable harm in deployed systems; that requires downstream task evaluation not included in this work.
+
+Model origin groupings are coarse and imperfect proxies for training data composition. Eight models is a thin basis for group level claims and findings should be interpreted as tendencies, not deterministic mappings.
+
+Human evaluation of whether the measured sentiment scores match human judgments has not been conducted and would strengthen validity considerably.
+
+\textbf{On polysemous terms.} The contextual aggregation tradeoff described in \S4.3 holds well for the largely monosemous political and economic terms in this dataset. For genuinely polysemous terms, ``Anarchism'' carrying both a political theory sense and a colloquial chaos sense, ``Bank'' carrying both financial and geographic senses, encoding in isolation rather than aggregating across naturally occurring sentences may produce embeddings that do not accurately represent either sense. The Market Anarchism artifact described in \S6.5 is a plausible example of this effect. Cross-model consistency across eight architecturally diverse models is the primary robustness check substituting for aggregation.
+
+\newpage
+
+% =========================================================
+\section{Conclusion}
+% =========================================================
+
+We have presented Axiom, a pipeline for measuring how embedding models score politically, economically, and value-laden concepts against user-defined sentiment axes. The pipeline applies semantic axis projection across eight Sentence Transformer models grouped by geographic and institutional origin, treats cross-model disagreement as a primary signal, and produces per-term, per-model, and per-group scores across six parallel judgment axes.
+
+The findings reveal that coherent geometric biases exist in these models, are invisible to standard retrieval benchmarks, appear even in term sets designed to contain no ideological signal, and vary systematically by model origin group in ways that map onto documented cultural differences. Prosocial values score negative or contested across all groups. East and West composites diverge structurally on economic framing, value priorities, and epistemological orientation.
+
+These findings have direct implications for practitioners selecting embedding models for search, recommendation and content-scoring applications. They also identify an underexplored threat model, deliberate ideological encoding via training data manipulation, that is resistant to standard auditing approaches and for which geometric probing of output embedding space may be one of the few practical detection methods currently available.
+
+Future work should include downstream task evaluation to establish whether geometric tilts produce measurable differences in retrieval outcomes, human evaluation of score validity, contextual embedding aggregation to address the monosemy assumption, and longitudinal application across model releases to detect systematic drift.
+
+The geometry of embedding space is not a neutral substrate. It is a product of training data, and training data is a product of culture. Making that structure visible is a precondition for reasoning about it.
+
+\newpage
+
+% =========================================================
+\section*{Note on AI Assistance}
+% =========================================================
+
+This paper was prepared with the assistance of a large language model used in a manner analogous to pair programming. The author, a software developer by background rather than an academic, used the tool iteratively throughout the writing process: drafting a section, reviewing and critiquing, revising based on that exchange and repeating. The intellectual content is the author's own work, developed and documented independently in an accompanying essay (\url{https://blog.studiohaynes.com}). The tool's contribution was in the back and forth of shaping that content into academic paper format: catching register mismatches, flagging structural gaps and suggesting revisions that the author then accepted, modified, or rejected. The final text reflects that iterative process, not a single generation.
+
+% =========================================================
+\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{14}
+
+  \bibitem{osgood1957}
+  Osgood, C.\,E., Suci, G.\,J., \& Tannenbaum, P.\,H. (1957). \textit{The Measurement of Meaning}. University of Illinois Press.
+
+  \bibitem{mikolov2013}
+  Mikolov, T., Yih, W., \& Zweig, G. (2013). Linguistic regularities in continuous space word representations. \textit{Proceedings of NAACL-HLT 2013}. \url{https://aclanthology.org/N13-1090/}
+
+  \bibitem{bolukbasi2016}
+  Bolukbasi, T., Chang, K.-W., Zou, J., Saligrama, V., \& Kalai, A. (2016). Man is to computer programmer as woman is to homemaker? Debiasing word embeddings. \textit{Advances in Neural Information Processing Systems 29}. \url{https://arxiv.org/abs/1607.06520}
+
+  \bibitem{caliskan2017}
+  Caliskan, A., Bryson, J.\,J., \& Narayanan, A. (2017). Semantics derived automatically from language corpora contain human-like biases. \textit{Science, 356}(6334), 183--186. \url{https://arxiv.org/abs/1608.07187}
+
+  \bibitem{an2018}
+  An, J., Kwak, H., \& Ahn, Y.-Y. (2018). SemAxis: A lightweight framework to characterize domain-specific word semantics beyond sentiment. \textit{Proceedings of ACL 2018}. \url{https://arxiv.org/abs/1806.05521}
+
+  \bibitem{may2019}
+  May, C., Wang, A., Bordia, S., Bowman, S.\,R., \& Rudinger, R. (2019). On measuring social biases in sentence encoders. \textit{Proceedings of NAACL 2019}. \url{https://arxiv.org/abs/1903.10561}
+
+  \bibitem{reimers2019}
+  Reimers, N., \& Gurevych, I. (2019). Sentence-BERT: Sentence embeddings using Siamese BERT-networks. \textit{Proceedings of EMNLP 2019}. \url{https://arxiv.org/abs/1908.10084}
+
+  \bibitem{kozlowski2019} Kozlowski, A.\,C., Taddy, M., \& Evans, J.\,A. (2019). The geometry of culture: Analyzing the meanings of class through word embeddings. \textit{American Sociological Review, 84}(5), 905--949. \url{https://arxiv.org/abs/1803.09288}
+
+  \bibitem{mathew2020}
+  Mathew, B., Dutt, R., Goyal, P., \& Mukherjee, A. (2020). POLAR: A framework for exploiting polar opposites in language models. \textit{Proceedings of WWW 2020}. \url{https://arxiv.org/abs/2001.09876}
+
+  \bibitem{bommasani2020}
+  Bommasani, R., Davis, A., \& Cardie, C. (2020). Interpreting pretrained contextualized representations via reductions to static embeddings. \textit{Proceedings of ACL 2020}. \url{https://arxiv.org/abs/2004.03736}
+
+  \bibitem{guo2021}
+  Guo, W., \& Caliskan, A. (2021). Detecting emergent intersectional biases: Contextualized word embeddings contain a distribution of human-like biases. \textit{Proceedings of AIES 2021}. \url{https://arxiv.org/abs/2006.03955}
+
+  \bibitem{wolfe2022}
+  Wolfe, R., Yang, Y., Howe, B., \& Caliskan, A. (2022). ML-EAT: A multilevel embedding association test. \textit{Proceedings of AIES 2022}. \url{https://arxiv.org/abs/2408.01966v2}
+
+  \bibitem{grand2022}
+  Grand, G., Blank, I.\,A., Pereira, F., \& Fedorenko, E. (2022). Semantic projection recovers rich human knowledge of multiple object features from word embeddings. \textit{Nature Human Behaviour, 6}, 975--987. \url{https://arxiv.org/abs/1802.01241}
+
+  \bibitem{zou2023}
+  Zou, A., Phan, L., Chen, S., Campbell, J., Guo, B., Hua, R., \dots \& Hendrycks, D. (2023). Representation Engineering: A top-down approach to AI transparency. \url{https://arxiv.org/abs/2310.01405}
+
+\end{thebibliography}
+
+\newpage
+
+% =========================================================
+\appendix
+% =========================================================
+
+\section{Scoring Strategy Comparison}
+
+The pipeline implements two scoring strategies. \textbf{Axis projection} (used for all reported findings) derives a single direction vector by subtracting the negative pole embedding from the positive pole, then projects each assessment term onto this axis. \textbf{Independent normalization} normalizes similarity to each pole separately using tanh scaling, then combines as $(s_{\text{pos}} - s_{\text{neg}}) / 2$.
+
+An alternative \textbf{independent normalization} strategy, normalizing similarity to each pole separately using tanh scaling then combining as $(s_{\text{pos}} - s_{\text{neg}}) / 2$, is implemented for methodological comparison.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.75\textwidth]{assets/up/independent-norm.png}
+  \caption{Naive independent normalization approach.}
+  \label{fig:method_independent_norm_image}
+\end{figure}
+
+Both strategies produce a Pearson $r > 0.95$ across terms on the political/economic term set, indicating the ranking structure is stable across scoring approaches. The primary advantage of axis projection is robustness for terms that sit geometrically near both poles simultaneously. Independent normalization is retained in the codebase for methodological comparison.
+
+\section{Normalization Parameter Sensitivity}
+
+The tanh scaling parameter $\lambda$ controls tail compression:
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{lll}
+    \toprule
+    $\lambda$ & Effect & $\pm 2\sigma$ maps to \\
+    \midrule
+    0.4 & Aggressive compression & $\pm 0.38$ \\
+    0.6 & Default                & $\pm 0.46$ \\
+    0.8 & Loose (approaches min-max) & $\pm 0.50$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Effect of tanh scaling parameter $\lambda$.}
+  \label{tab:lambda}
+\end{table}
+
+Rankings are stable across this range. The default $\lambda = 0.6$ is used for all reported results.
+
+\section{Model Encoding Functions}
+
+Models with asymmetric query/document encoding interfaces require separate encoding functions for assessment terms (encoded as documents) and judgment axis terms (encoded as queries):
+
+\begin{table}[H]
+  \centering
+  \footnotesize
+  \begin{tabular}{lp{0.35\textwidth}p{0.35\textwidth}}
+    \toprule
+    Model & Query Encoding & Document Encoding \\
+    \midrule
+    google/embeddinggemma-300m
+    & \texttt{encode\_query()}
+    & \texttt{encode\_document()} \\
+    nomic-ai/nomic-embed-text-v2-moe
+    & \texttt{encode(prompt\_name="query")}
+    & \texttt{encode(prompt\_name="passage")} \\
+    jinaai/jina-embeddings-v3
+    & \texttt{encode(task="retrieval.query",} \texttt{prompt\_name="retrieval.query")}
+    & \texttt{encode(task="retrieval.passage",} \texttt{prompt\_name="retrieval.passage")} \\
+    Qwen/Qwen3-Embedding-0.6B
+    & \texttt{encode(prompt\_name="query")}
+    & \texttt{encode()} (default) \\
+    All others
+    & \texttt{encode()} (default)
+    & \texttt{encode()} (default) \\
+    \bottomrule
+  \end{tabular}
+  \caption{Model-specific encoding functions.}
+  \label{tab:encoding}
+\end{table}
+
+\end{document}
