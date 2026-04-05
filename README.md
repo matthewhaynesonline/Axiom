@@ -1,7 +1,5 @@
 # Axiom
 
-> Embedding models make implicit judgments about political and economic concepts. This project measures them, measures where models disagree and asks what happens when those disagreements end up inside your search and recommendation engines.
-
 **Axiom** is a multi model semantic analysis pipeline designed to measure the implicit sentiments and value systems encoded within modern embedding models.
 
 Standard benchmarks (like [MTEB](https://huggingface.co/spaces/mteb/leaderboard)) evaluate retrieval performance but fail to capture structural ideological biases. Axiom bridges this gap by using semantic axis projection to evaluate how models from different geographic and institutional origins score political, economic and value-laden concepts.

@@ -240,7 +240,24 @@
 <main>
   <nav class="navbar bg-body-tertiary">
     <div class="container-fluid">
-      <span class="navbar-brand mb-0 h1">Axiom</span>
+      <div class="d-flex align-items-center">
+        <span class="navbar-brand me-2">Axiom</span>
+        <span>
+          <small>
+            by <a
+              class="text-decoration-none me-2"
+              href="https://github.com/matthewhaynesonline"
+            >
+              @matthewhaynesonline
+            </a>
+
+            <a
+              class="text-decoration-none"
+              href="https://github.com/matthewhaynesonline/Axiom">Repo</a
+            >
+          </small>
+        </span>
+      </div>
       <div class="d-flex">
         <ThemeSelector />
       </div>
