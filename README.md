@@ -16,6 +16,25 @@ This codebase serves as the technical foundation for the following research and 
 1. [jupyter notebook](/pipeline/): main data analysis pipeline
 2. [svelte companion explorer app](/data_explorer/): for in browser data manipulation
 
+### Pipeline Process
+
+1. load models
+   1. `models = ml_models.ModelConfig.load_models("models.csv", ENABLED_MODELS)`
+2. load data
+   1. `data_df = pl.read_csv(SOURCE_DATA)`
+3. for model in models
+   1. precompute embeddings
+      1. `embedding.precompute_embeddings`
+   2. process data for terms and judgements
+      1. `data = pipeline.process_data`
+      2. `processed_results[(a_cat, j_cat)].append`
+4. export axis data
+   1. for processed results
+      1. build averages
+         1. `avgs = pipeline.build_all_avgs`
+      2. write
+         1. `final_axis_df.write_ipc`
+
 ## Installation
 
 ```
