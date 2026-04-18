@@ -72,6 +72,7 @@
 \captionsetup{labelfont={bf,sf}, font=small, labelsep=period}
 \usepackage{graphicx}
 % \usepackage{svg} % Uncomment if compiling with --shell-escape for SVGs
+\usepackage{longtable}
 
 % =========================================================
 % CUSTOM ENVIRONMENTS (Prompts & Lists)
@@ -151,11 +152,11 @@
     \vspace{1.2em}
   }
 
-  \abstract{Standard evaluation frameworks for embedding models, including \href{https://huggingface.co/spaces/mteb/leaderboard}{MTEB}, do not measure the implicit sentiment models assign to politically and economically charged concepts. We present \textbf{Axiom}, a multi-model semantic analysis pipeline that measures how eight embedding models, grouped by geographic and institutional origin (East, West, Academia), score political/economic, value-laden and neutral control terms across six judgment axes (\textit{good/evil}, \textit{virtuous/wicked}, \textit{safe/dangerous}, \textit{feasible/unfeasible}, \textit{superior/inferior}, \textit{ideal/flawed}). Cross-model disagreement, the standard deviation of scores across models for a given term, is treated as a primary signal rather than noise. A supplementary value systems evaluation uses direct question-answer cosine similarity to measure revealed preference rather than sentiment scoring, asking not ``is capitalism good?'' but ``when asked about economic systems, which answer does this model reach for first?'' We find that: (1) class sentiment bias appears in neutral control terms designed to contain no ideological signal; (2) models converge on ideological extremes but fracture on contested centrist concepts; (3) values associated with yielding, obligation and deference score negatively across all groups; and (4) East and  West model groups diverge systematically on economic framing, value priorities and epistemological orientation in ways that map onto documented cultural differences. The value systems evaluation reveals distinct group level inversions invisible to standard retrieval benchmarks: East and West composites rank globalism and multiculturalism in opposite positions. These findings have direct implications for search and recommendation systems built on these models and the geometric structure they expose identifies a potential attack surface for deliberate ideological encoding resistant to standard auditing approaches.}
+  \abstract{Standard evaluation frameworks for embedding models, including \href{https://huggingface.co/spaces/mteb/leaderboard}{MTEB}, do not measure the implicit sentiment models assign to politically and economically charged concepts. We present \textbf{Axiom}, a multi-model semantic analysis pipeline that measures how eight embedding models, grouped by geographic and institutional origin (East, West, Academia), score political/economic, value-laden and neutral control terms across six judgment axes (\textit{good/evil}, \textit{virtuous/wicked}, \textit{safe/dangerous}, \textit{feasible/unfeasible}, \textit{superior/inferior}, \textit{ideal/flawed}). Cross-model disagreement, the standard deviation of scores across models for a given term, is treated as a primary signal rather than noise. A supplementary value systems evaluation uses direct question-answer cosine similarity to measure revealed preference rather than sentiment scoring, asking not ``is capitalism good?'' but ``when asked about economic systems, which answer does this model reach for first?'' We find that: (1) class sentiment bias appears in neutral control terms designed to contain no ideological signal; (2) models converge on ideological extremes but fracture on contested centrist concepts; (3) yielding and deference as well as ego and contest score negatively across all groups; and (4) East and  West model groups diverge systematically on economic framing, value priorities and epistemological orientation in ways that map onto documented cultural differences. The value systems evaluation reveals distinct group level inversions invisible to standard retrieval benchmarks: East and West composites rank globalism and multiculturalism in opposite positions. These findings have direct implications for search and recommendation systems built on these models and the geometric structure they expose identifies a potential attack surface for deliberate ideological encoding resistant to standard auditing approaches.}
 
   \metadata[Date]{\today}
   \metadata[Code]{\url{https://github.com/matthewhaynesonline/Axiom}}
-  \metadata[Blog]{\url{https://blog.studiohaynes.com/essays/do-models-dream.html}}
+  \metadata[Blog]{\url{https://blog.studiohaynes.com/axiom}}
   \vspace{0.5em}
 \end{callout-box}
 
@@ -333,7 +334,7 @@ Applied after z-scoring to compress outliers without hard clipping:
     \vspace{0pt}
     \textbf{Formula}
     \[
-      \hat{s} = \frac{\tanh(z \cdot \lambda)}{2}
+      \hat{s} = \tanh(z \cdot \lambda)
     \]
   \end{minipage}
   \hfill
@@ -342,7 +343,7 @@ Applied after z-scoring to compress outliers without hard clipping:
     \textbf{Implementation}
 \begin{lstlisting}[language=Python]
 z = zscore_np(arr)
-np.tanh(z * scale) / 2
+np.tanh(z * scale)
 \end{lstlisting}
 
   \end{minipage}
@@ -359,7 +360,7 @@ where $\lambda = 0.6$ by default.
   \label{fig:background_tanh_image}
 \end{figure}
 
-This maps all values into the open interval $(-0.5, +0.5)$\footnote{The ±0.5 range was chosen deliberately: a zero-centered scale rules out the asymmetric $[0, 1]$ interval, while halving the tanh output keeps the total scale width to exactly 1 unit. This makes scores intuitively comparable across terms and models without the compressed resolution that results from mapping to $[-1, +1]$.} with an S-shaped response: values near zero pass through nearly unchanged, while extreme values are compressed toward the boundary without reaching it. This prevents a single outlier term from anchoring one end of the scale and collapsing the resolution of all other terms, a failure mode that occurs with z-score followed by min-max normalization when one term dominates the range.
+This maps all values into the open interval $(-1.0, +1.0)$ with an S-shaped response: values near zero pass through nearly unchanged, while extreme values are compressed toward the boundary without reaching it. This prevents a single outlier term from anchoring one end of the scale and collapsing the resolution of all other terms, a failure mode that occurs with z-score followed by min-max normalization when one term dominates the range.
 
 % \newpage
 
@@ -367,7 +368,7 @@ This maps all values into the open interval $(-0.5, +0.5)$\footnote{The ±0.5 ra
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1\textwidth]{assets/up/heatmap.png}
+  \includegraphics[width=1\textwidth]{assets/heat2.jpg}
   \caption{Axiom heatmap of political and economic terms composite scores.}
   \label{fig:background_heatmap_image}
 \end{figure}
@@ -450,7 +451,7 @@ Low $\sigma_t$ indicates consensus. High $\sigma_t$ indicates geometric instabil
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.75\textwidth]{assets/up/scatter.png}
+  \includegraphics[width=0.75\textwidth]{assets/scatter2.png}
   \caption{Axiom scatter plot of sentiment and consensus of political and economic terms composite scores.}
   \label{fig:background_scatter_plot_image}
 \end{figure}
@@ -594,6 +595,8 @@ Complete term lists are provided in Appendix~\ref{app:terms}.
   \label{tab:axes}
 \end{table}
 
+Pairwise Pearson correlations across the six axes on the political/economic term set range from $r = 0.07$ to $r = 0.50$ (mean $\approx 0.24$), confirming that the axes capture meaningfully distinct semantic dimensions rather than redundant signal. The highest correlation is between General Judgment and Safety ($r = 0.50$), reflecting the semantic adjacency of ``good'' and ``safe'' in training text; these axes overlap but are not interchangeable. The Complex Judgment axis (virtuous/wicked) is the most independent, reaching a maximum of $r = 0.21$ against any other axis. This suggests that ``virtuous'' and ``wicked'' occupy a more specifically moral or religious register in embedding space, geometrically distinct from the more general good/evil direction. The multi-axis composite averaging reduces sensitivity to any single axis pair's idiosyncratic behavior across a set of axes that are empirically confirmed to be measuring different things. Complete correlations provided in Appendix~\ref{app:axis_correlation}.
+
 \subsection{Value Systems Questions}
 
 A separate evaluation assessed model preference ordering across structured questions with enumerated options: e.g.\ ``Best type of economy'' (Capitalism, Socialism, Communism, Fascism, Mixed economy, Market anarchism, Market economy) and ``How should knowledge and truth be established'' (Empiricism, Scientific consensus, Rationalism, Religious revelation, Pragmatism, Postmodernism, Intuition). Scoring used direct cosine similarity between question and answer embeddings, with min-max normalization per question. Complete question and option sets are provided in Appendix~\ref{app:value_systems}.
@@ -622,15 +625,15 @@ The neutral control term set was included to validate the pipeline. It revealed 
     \toprule
     \textbf{Term} & \textbf{Mean Score} & \textbf{Std (Disagreement)} \\
     \midrule
-    Store       & $+0.22$ & $0.07$ \\
-    Cup         & $+0.13$ & $0.06$ \\
-    Sofa        & $+0.11$ & $0.09$ \\
-    Warehouse   & $+0.10$ & $0.05$ \\
-    Clock       & $-0.09$ & $0.05$ \\
-    Rope        & $-0.10$ & $0.09$ \\
-    Nail        & $-0.19$ & $0.10$ \\
-    Screwdriver & $-0.19$ & $0.09$ \\
-    Hammer      & $-0.23$ & $0.05$ \\
+    Store       & $+0.45$ & $0.15$ \\
+    Cup         & $+0.26$ & $0.13$ \\
+    Sofa        & $+0.21$ & $0.18$ \\
+    Warehouse   & $+0.20$ & $0.09$ \\
+    Clock       & $-0.17$ & $0.09$ \\
+    Rope        & $-0.19$ & $0.18$ \\
+    Nail        & $-0.38$ & $0.19$ \\
+    Screwdriver & $-0.38$ & $0.17$ \\
+    Hammer      & $-0.45$ & $0.10$ \\
     \bottomrule
   \end{tabular}
   \caption{Selected neutral control term scores (composite across six axes,
@@ -639,6 +642,8 @@ The neutral control term set was included to validate the pipeline. It revealed 
 \end{table}
 
 The pattern is interpretable as a class sentiment absorbed from training corpora: concepts associated with consumption, domestic comfort, and commerce co-occur with positively framed language in large datasets more frequently than concepts associated with physical labor and manual action. Notably, the positive end is not simply ``commercial and digital'': Cup, Sofa, and Warehouse score positively alongside Store, while Clock scores negative despite its digital associations. The more defensible reading is labor and physical action versus consumption and service. This bias is consistent across architecturally diverse models from three origin groups, ruling out model-specific artifact as an explanation.
+
+\pagebreak
 
 \subsection{Political Terms: Consensus at the Extremes, Disagreement at the Center}
 
@@ -650,13 +655,13 @@ Cross-model disagreement on political/economic terms is not uniformly distribute
     \toprule
     \textbf{Term} & \textbf{Mean Score} & \textbf{Std (Disagreement)} \\
     \midrule
-    Free Trade           & $+0.17$ & $0.04$ \\
-    Progressive taxation & $+0.10$ & $0.10$ \\
-    Corporatism          & $-0.02$ & $0.12$ \\
-    Regressive taxation  & $-0.11$ & $0.10$ \\
-    Deregulation         & $-0.14$ & $0.15$ \\
-    Crony capitalism     & $-0.21$ & $0.08$ \\
-    Fascism              & $-0.21$ & $0.04$ \\
+    Free Trade           & $+0.34$ & $0.08$ \\
+    Progressive taxation & $+0.21$ & $0.21$ \\
+    Corporatism          & $-0.05$ & $0.25$ \\
+    Regressive taxation  & $-0.23$ & $0.21$ \\
+    Deregulation         & $-0.28$ & $0.29$ \\
+    Crony capitalism     & $-0.43$ & $0.16$ \\
+    Fascism              & $-0.42$ & $0.08$ \\
     \bottomrule
   \end{tabular}
   \caption{Political/economic terms by cross-model disagreement (composite
@@ -664,11 +669,13 @@ Cross-model disagreement on political/economic terms is not uniformly distribute
   \label{tab:political_terms}
 \end{table}
 
-The high disagreement terms share a property: their sentiment depends heavily on political priors and carries no dominant association with historical atrocities. Progressive and Regressive taxation illustrate this directly: nearly identical disagreement scores ($0.10$), opposite sentiment and no resolution available without a prior about the role of the state. The low disagreement terms either carry overwhelming historical atrocity association across training corpora regardless of origin (Fascism), or describe phenomena with unambiguous negative framing in economic discourse (Crony capitalism), producing convergent scores.
+The high disagreement terms share a property: their sentiment depends heavily on political priors and carries no dominant association with historical atrocities. Progressive and Regressive taxation illustrate this directly: nearly identical disagreement scores ($0.21$), opposite sentiment and no resolution available without a prior about the role of the state. The low disagreement terms either carry overwhelming historical atrocity association across training corpora regardless of origin (Fascism), or describe phenomena with unambiguous negative framing in economic discourse (Crony capitalism), producing convergent scores.
+
+\pagebreak
 
 \subsection{Value Scores Split by Obligation vs. Achievement}
 
-Several value-laden terms that normative frameworks broadly consider positive score negative or contested (Table~\ref{tab:value_terms}). The pattern is not uniform across all prosocial values: Sustainability, Solidarity, and Stewardship score among the highest in the entire value-laden category. What scores negatively are values associated with yielding, obligation, and deference rather than collective achievement or external recognition.
+Several value-laden terms that normative frameworks broadly consider positive score negative or contested (Table~\ref{tab:value_terms}). The pattern is not uniform across all prosocial values: Sustainability, Solidarity, and Stewardship score among the highest in the entire value-laden category. What scores negatively falls into two distinct clusters: values associated with yielding, obligation and deference (Humility, Forgiveness, Duty), and values associated with ego and contest (Competition, Ambition, Individualism, Courage).
 
 \begin{table}[H]
   \centering
@@ -676,23 +683,23 @@ Several value-laden terms that normative frameworks broadly consider positive sc
     \toprule
     \textbf{Term} & \textbf{Mean Score} & \textbf{Std (Disagreement)} \\
     \midrule
-    Sustainability & $+0.19$ & $0.12$ \\
-    Solidarity     & $+0.16$ & $0.08$ \\
-    Stewardship    & $+0.16$ & $0.09$ \\
-    Justice        & $-0.03$ & $0.08$ \\
-    Integrity      & $-0.02$ & $0.10$ \\
-    Accountability & $-0.07$ & $0.10$ \\
-    Humility       & $-0.12$ & $0.06$ \\
-    Forgiveness    & $-0.14$ & $0.12$ \\
+    Sustainability & $+0.38$ & $0.25$ \\
+    Solidarity     & $+0.33$ & $0.15$ \\
+    Stewardship    & $+0.31$ & $0.17$ \\
+    Justice        & $-0.05$ & $0.16$ \\
+    Integrity      & $-0.05$ & $0.20$ \\
+    Accountability & $-0.14$ & $0.20$ \\
+    Humility       & $-0.25$ & $0.11$ \\
+    Forgiveness    & $-0.28$ & $0.24$ \\
     \bottomrule
   \end{tabular}
   \caption{Selected value-laden terms (composite judgment, all-model average).
-    Positive end shows collective-achievement values; negative end shows
-  yielding, obligation, and deference-associated values.}
+    Positive end shows collective-achievement values; negative end includes
+  both yielding and deference-associated values and ego and contest terms.}
   \label{tab:value_terms}
 \end{table}
 
-Forgiveness is both the most negative and among the most contested value-laden terms. Justice and Integrity scoring near zero is a separate notable finding: foundational ethical concepts are essentially invisible to these models, sitting at near orthogonal positions relative to the judgment axes. The most plausible explanation for the negative cluster is that yielding and obligation associated traits co-occur with weakness and inferiority framing in training text, while collective and stewardship oriented terms co-occur with positive civic and environmental discourse. Neither pattern reflects deliberate design.
+Forgiveness is both the most negative and among the most contested value-laden terms. Justice and Integrity scoring near zero is a separate notable finding: foundational ethical concepts are essentially invisible to these models, sitting at near orthogonal positions relative to the judgment axes. The most plausible explanation for the deference cluster is that yielding and obligation associated traits co-occur with weakness and inferiority framing in training text, while collective and stewardship oriented terms co-occur with positive civic and environmental discourse. The ego and contest cluster likely reflects a different mechanism: adversarial and zero sum language in training text co-occurs with competitive framing in ways that pull these terms toward the negative pole through association rather than moral judgment. Neither pattern reflects deliberate design.
 
 \subsection{East / West Group Divergence}
 
@@ -714,10 +721,16 @@ The sharpest single group level divergence: East composite ranks Globalism last 
 
 East composite ranks Empiricism \#1 (trust direct observation). West and Academia rank Scientific Consensus \#1 (trust institutional validation). The distinction between trusting direct observation versus trusting institutional authority is a substantive epistemological divide that appears geometrically in models evaluated exclusively on retrieval benchmarks. This finding is not necessarily in tension with the collectivist / individualist pattern observed in value framing. The empiricism / consensus split operates on a different axis: epistemic authority rather than social organization. East models favoring empiricism reflects a preference for direct observation over institutionally validated consensus: this aligns with a skepticism toward Western credentialing structures as the arbiter of legitimate knowledge that is consistent with, rather than contradicting, the broader East / West divergence pattern.
 
+\subsubsection{Value Systems Rankings: Political Identity}
+
+Across all three composite groups, race / ethnicity ranks in the top two positions for primary basis of political identity, with Academia and East placing it \#1. This result is consistent across groups in a way that the globalism / multiculturalism inversion is not and warrants further investigation; the finding is noted as a candidate for follow on analysis with a more controlled identity term set.
+
+\newpage
+
 \subsection{The Market Anarchism Artifact}
 \label{sec:market-anarchism}
 
-Across value systems economy rankings, every group ranks Mixed economy \#1. West and Academia composites both rank Market anarchism in the top 3, above Socialism. This is almost certainly an artifact: ``market'' carries strong positive associations in all training corpora, and ``anarchism'' clusters near decentralization and autonomy. The combination produces a high composite score without a coherent ideological reading.
+Across value systems economy rankings, every group ranks Mixed economy \#1. West and Academia composites both rank Market anarchism in the top 3, above Socialism. This is almost certainly an artifact: ``market'' carries strong positive associations in all training corpora, and ``anarchism'' clusters near decentralization and autonomy. The combination produces a high composite score without a coherent ideological reading. A similar artifact appears in the government rankings: Academia ranks Oligarchy \#1, above Democracy, likely because ``oligarchy'' clusters near organizational and governance vocabulary rather than carrying its political valence.
 
 This result illustrates a general failure mode: embedding geometry can produce ranking outputs that resemble findings but are compositional accidents. Downstream consumers should cross check surprising outputs against an interpretable mechanistic explanation before treating them as ideological signal.
 
@@ -787,7 +800,7 @@ The geometry of embedding space is not a neutral substrate. It is a product of t
 \section*{Note on AI Assistance}
 % =========================================================
 
-This paper was prepared with the assistance of a large language model used in a manner analogous to pair programming. The author, a software developer by background rather than an academic, used the tool iteratively throughout the writing process: drafting a section, reviewing and critiquing, revising based on that exchange and repeating. The intellectual content is the author's own work, developed and documented independently in an accompanying essay (\url{https://blog.studiohaynes.com/essays/do-models-dream.html}). The tool's contribution was in the back and forth of shaping that content into academic paper format: catching register mismatches, flagging structural gaps and suggesting revisions that the author then accepted, modified, or rejected. The final text reflects that iterative process, not a single generation.
+This paper was prepared with the assistance of a large language model used in a manner analogous to pair programming. The author, a software developer by background rather than an academic, used the tool iteratively throughout the writing process: drafting a section, reviewing and critiquing, revising based on that exchange and repeating. The intellectual content is the author's own work, developed and documented independently in an accompanying essay (\url{https://blog.studiohaynes.com/axiom}). The tool's contribution was in the back and forth of shaping that content into academic paper format: catching register mismatches, flagging structural gaps and suggesting revisions that the author then accepted, modified, or rejected. The final text reflects that iterative process, not a single generation.
 
 % =========================================================
 \addcontentsline{toc}{section}{References}
@@ -872,11 +885,11 @@ The app and all underlying data artifacts are available at: \url{https://github.
 
 The pipeline implements two scoring strategies. \textbf{Axis projection} (used for all reported findings) derives a single direction vector by subtracting the negative pole embedding from the positive pole, then projects each assessment term onto this axis.
 
-An alternative \textbf{independent normalization} strategy, normalizing similarity to each pole separately using tanh scaling then combining as $(s_{\text{pos}} - s_{\text{neg}}) / 2$, is implemented for methodological comparison.
+An alternative \textbf{independent normalization} strategy, normalizing similarity to each pole separately using tanh scaling then combining as $s_{\text{pos}} - s_{\text{neg}}$, is implemented for methodological comparison.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.75\textwidth]{assets/independent-norm2.jpg}
+  \includegraphics[width=0.75\textwidth]{assets/good-evil-score.png}
   \caption{Naive independent normalization approach.}
   \label{fig:method_independent_norm_image}
 \end{figure}
@@ -893,9 +906,9 @@ The tanh scaling parameter $\lambda$ controls tail compression:
     \toprule
     $\lambda$ & Effect & $\pm 2\sigma$ maps to \\
     \midrule
-    0.4 & Aggressive compression & $\pm 0.38$ \\
-    0.6 & Default                & $\pm 0.46$ \\
-    0.8 & Loose (approaches min-max) & $\pm 0.50$ \\
+    0.4 & Aggressive compression & $\pm 0.76$ \\
+    0.6 & Default                & $\pm 0.92$ \\
+    0.8 & Loose (approaches min-max) & $\pm 1.0$ \\
     \bottomrule
   \end{tabular}
   \caption{Effect of tanh scaling parameter $\lambda$.}
@@ -903,6 +916,30 @@ The tanh scaling parameter $\lambda$ controls tail compression:
 \end{table}
 
 Rankings are stable across this range. The default $\lambda = 0.6$ is used for all reported results.
+
+\section{Axis Correlation Matrix}
+\label{app:axis_correlation}
+
+Pairwise Pearson correlations were computed across the six judgment axes on the political/economic term set, averaged across all eight models. For each model, terms were pivoted into a matrix of shape $(\text{terms} \times \text{axes})$ and the inter-axis correlation matrix was computed; the values below are the mean across all models.
+
+\begin{table}[H]
+  \centering
+  \footnotesize
+  \begin{tabular}{lcccccc}
+    \toprule
+    & \textbf{General} & \textbf{Complex} & \textbf{Feasibility} & \textbf{Idealism} & \textbf{Safety} & \textbf{Superiority} \\
+    \midrule
+    \textbf{General}     & $1.00$ & $0.07$ & $0.39$ & $0.17$ & $0.50$ & $0.15$ \\
+    \textbf{Complex}     & $0.07$ & $1.00$ & $0.11$ & $0.21$ & $0.15$ & $0.20$ \\
+    \textbf{Feasibility} & $0.39$ & $0.11$ & $1.00$ & $0.30$ & $0.34$ & $0.18$ \\
+    \textbf{Idealism}    & $0.17$ & $0.21$ & $0.30$ & $1.00$ & $0.24$ & $0.17$ \\
+    \textbf{Safety}      & $0.50$ & $0.15$ & $0.34$ & $0.24$ & $1.00$ & $0.22$ \\
+    \textbf{Superiority} & $0.15$ & $0.20$ & $0.18$ & $0.17$ & $0.22$ & $1.00$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Mean pairwise Pearson correlation between judgment axes on the political/economic term set, averaged across all eight models. Column and row labels correspond to: General = good/evil; Complex = virtuous/wicked; Feasibility = feasible/unfeasible; Idealism = ideal/flawed; Safety = safe/dangerous; Superiority = superior/inferior.}
+  \label{tab:axis_correlation}
+\end{table}
 
 \section{Model Encoding Functions}
 
@@ -1095,5 +1132,331 @@ Nine structured questions were used in the value systems evaluation. For each qu
   53 total options).}
   \label{tab:value_systems_questions}
 \end{table}
+
+% =========================================================
+% APPENDIX: Data
+% =========================================================
+\section{Data}
+\label{app:data}
+
+\begin{longtable}{lcc}
+  \caption{Complete neutral control term scores (composite across six axes, all model average). Terms sorted by mean sentiment descending.}
+  \label{tab:appendix_neutral_controls} \\
+  \toprule
+  \textbf{Term} & \textbf{Mean Score} & \textbf{Std (Disagreement)} \\
+  \midrule
+  \endfirsthead
+  \toprule
+  \textbf{Term} & \textbf{Mean Score} & \textbf{Std (Disagreement)} \\
+  \midrule
+  \endhead
+  \midrule
+  \multicolumn{3}{r}{\textit{Continued on next page}} \\
+  \endfoot
+  \bottomrule
+  \endlastfoot
+  Store & $+0.45$ & $0.15$ \\
+  Package & $+0.28$ & $0.21$ \\
+  Cup & $+0.26$ & $0.13$ \\
+  App & $+0.22$ & $0.17$ \\
+  Sofa & $+0.21$ & $0.18$ \\
+  Warehouse & $+0.20$ & $0.09$ \\
+  Bus & $+0.19$ & $0.19$ \\
+  Measurement & $+0.18$ & $0.18$ \\
+  Chair & $+0.17$ & $0.19$ \\
+  Bank & $+0.16$ & $0.24$ \\
+  Monitor & $+0.16$ & $0.13$ \\
+  Garden & $+0.14$ & $0.18$ \\
+  Calendar & $+0.13$ & $0.23$ \\
+  Station & $+0.12$ & $0.18$ \\
+  Table & $+0.10$ & $0.14$ \\
+  Shelf & $+0.09$ & $0.19$ \\
+  Garage & $+0.09$ & $0.14$ \\
+  Email & $+0.09$ & $0.18$ \\
+  Airport & $+0.09$ & $0.18$ \\
+  Factory & $+0.08$ & $0.16$ \\
+  School & $+0.08$ & $0.21$ \\
+  File & $+0.08$ & $0.22$ \\
+  Paper & $+0.08$ & $0.11$ \\
+  Keyboard & $+0.06$ & $0.17$ \\
+  Temperature & $+0.06$ & $0.14$ \\
+  Plate & $+0.05$ & $0.20$ \\
+  Clinic & $+0.05$ & $0.16$ \\
+  Paragraph & $+0.05$ & $0.16$ \\
+  Browser & $+0.02$ & $0.18$ \\
+  Box & $+0.02$ & $0.19$ \\
+  Sentence & $+0.01$ & $0.16$ \\
+  Color & $+0.01$ & $0.16$ \\
+  Book & $+0.00$ & $0.22$ \\
+  Envelope & $+0.00$ & $0.21$ \\
+  Phone & $-0.01$ & $0.18$ \\
+  Screen & $-0.02$ & $0.12$ \\
+  Folder & $-0.02$ & $0.14$ \\
+  Cursor & $-0.03$ & $0.14$ \\
+  Bed & $-0.03$ & $0.16$ \\
+  Ceiling & $-0.05$ & $0.23$ \\
+  Train & $-0.06$ & $0.21$ \\
+  Pen & $-0.06$ & $0.17$ \\
+  Window & $-0.07$ & $0.20$ \\
+  Spoon & $-0.07$ & $0.17$ \\
+  Bridge & $-0.08$ & $0.19$ \\
+  Street & $-0.09$ & $0.19$ \\
+  Lamp & $-0.10$ & $0.19$ \\
+  Hospital & $-0.11$ & $0.17$ \\
+  Elevator & $-0.11$ & $0.17$ \\
+  Door & $-0.13$ & $0.16$ \\
+  Tool & $-0.13$ & $0.23$ \\
+  Road & $-0.13$ & $0.14$ \\
+  Bottle & $-0.14$ & $0.17$ \\
+  Stairs & $-0.15$ & $0.19$ \\
+  Drawer & $-0.15$ & $0.18$ \\
+  Clock & $-0.17$ & $0.09$ \\
+  Mouse & $-0.19$ & $0.09$ \\
+  Rope & $-0.19$ & $0.18$ \\
+  Floor & $-0.20$ & $0.14$ \\
+  Fork & $-0.21$ & $0.22$ \\
+  Nail & $-0.38$ & $0.19$ \\
+  Screwdriver & $-0.38$ & $0.17$ \\
+  Hammer & $-0.45$ & $0.10$ \\
+\end{longtable}
+
+\begin{longtable}{lcc}
+  \caption{Complete political-economic composite sentiment scores (all model average). Terms sorted by mean sentiment descending.}
+  \label{tab:appendix_political_economic_composite_consensus} \\
+  \toprule
+  \textbf{Term} & \textbf{Mean Score} & \textbf{Std (Disagreement)} \\
+  \midrule
+  \endfirsthead
+  \toprule
+  \textbf{Term} & \textbf{Mean Score} & \textbf{Std (Disagreement)} \\
+  \midrule
+  \endhead
+  \midrule
+  \multicolumn{3}{r}{\textit{Continued on next page}} \\
+  \endfoot
+  \bottomrule
+  \endlastfoot
+  Public goods & $+0.39$ & $0.16$ \\
+  Free trade & $+0.34$ & $0.08$ \\
+  Universal Basic Income & $+0.31$ & $0.12$ \\
+  Social democracy & $+0.29$ & $0.14$ \\
+  Sovereign wealth fund & $+0.27$ & $0.14$ \\
+  Trade surplus & $+0.25$ & $0.19$ \\
+  Libertarianism & $+0.22$ & $0.13$ \\
+  Subsidy & $+0.21$ & $0.13$ \\
+  Welfare state & $+0.21$ & $0.09$ \\
+  Progressive taxation & $+0.21$ & $0.21$ \\
+  Property rights & $+0.19$ & $0.08$ \\
+  Socialism & $+0.16$ & $0.18$ \\
+  Industrial policy & $+0.14$ & $0.08$ \\
+  Market economy & $+0.14$ & $0.07$ \\
+  Quantitative easing & $+0.14$ & $0.21$ \\
+  Fiscal policy & $+0.13$ & $0.12$ \\
+  Monetary policy & $+0.13$ & $0.11$ \\
+  Financialization & $+0.13$ & $0.12$ \\
+  Planned economy & $+0.13$ & $0.12$ \\
+  State capitalism & $+0.12$ & $0.10$ \\
+  Protectionism & $+0.11$ & $0.12$ \\
+  Monetarism & $+0.09$ & $0.18$ \\
+  Capital controls & $+0.09$ & $0.13$ \\
+  Gig economy & $+0.09$ & $0.14$ \\
+  Mercantilism & $+0.09$ & $0.07$ \\
+  Gini coefficient & $+0.07$ & $0.19$ \\
+  Globalization & $+0.07$ & $0.15$ \\
+  Labor unionism & $+0.05$ & $0.12$ \\
+  Microfinance & $+0.05$ & $0.09$ \\
+  Economic nationalism & $+0.04$ & $0.10$ \\
+  Keynesianism & $+0.03$ & $0.13$ \\
+  Tariff & $+0.02$ & $0.10$ \\
+  Capital flight & $-0.00$ & $0.18$ \\
+  Rent seeking & $-0.01$ & $0.21$ \\
+  Currency peg & $-0.02$ & $0.19$ \\
+  Capitalism & $-0.03$ & $0.12$ \\
+  Corporatism & $-0.05$ & $0.25$ \\
+  Mixed economy & $-0.11$ & $0.29$ \\
+  Communism & $-0.11$ & $0.13$ \\
+  Neoliberalism & $-0.13$ & $0.13$ \\
+  Sovereign debt & $-0.15$ & $0.16$ \\
+  Informal economy & $-0.19$ & $0.24$ \\
+  Regressive taxation & $-0.23$ & $0.21$ \\
+  Externalities & $-0.24$ & $0.20$ \\
+  Austerity & $-0.27$ & $0.20$ \\
+  Deregulation & $-0.28$ & $0.29$ \\
+  Anarchism & $-0.34$ & $0.13$ \\
+  Income inequality & $-0.37$ & $0.16$ \\
+  Trade deficit & $-0.39$ & $0.17$ \\
+  Shadow banking & $-0.41$ & $0.14$ \\
+  Embargo & $-0.41$ & $0.19$ \\
+  Fascism & $-0.42$ & $0.08$ \\
+  Crony capitalism & $-0.43$ & $0.16$ \\
+\end{longtable}
+
+\begin{longtable}{lcc}
+  \caption{Complete value-laden composite sentiment scores (all model average). Terms sorted by mean sentiment descending.}
+  \label{tab:appendix_value_laden_composite_consensus} \\
+  \toprule
+  \textbf{Term} & \textbf{Mean Score} & \textbf{Std (Disagreement)} \\
+  \midrule
+  \endfirsthead
+  \toprule
+  \textbf{Term} & \textbf{Mean Score} & \textbf{Std (Disagreement)} \\
+  \midrule
+  \endhead
+  \midrule
+  \multicolumn{3}{r}{\textit{Continued on next page}} \\
+  \endfoot
+  \bottomrule
+  \endlastfoot
+  Sustainability & $+0.38$ & $0.25$ \\
+  Solidarity & $+0.33$ & $0.15$ \\
+  Respect & $+0.32$ & $0.16$ \\
+  Stewardship & $+0.31$ & $0.17$ \\
+  Service & $+0.29$ & $0.16$ \\
+  Harmony & $+0.21$ & $0.16$ \\
+  Honor & $+0.19$ & $0.14$ \\
+  Liberty & $+0.17$ & $0.18$ \\
+  Meritocracy & $+0.17$ & $0.10$ \\
+  Benevolence & $+0.14$ & $0.18$ \\
+  Freedom & $+0.09$ & $0.17$ \\
+  Loyalty & $+0.08$ & $0.14$ \\
+  Honesty & $+0.03$ & $0.16$ \\
+  Compassion & $+0.03$ & $0.18$ \\
+  Transparency & $+0.02$ & $0.15$ \\
+  Equality & $+0.01$ & $0.17$ \\
+  Equity & $+0.00$ & $0.13$ \\
+  Autonomy & $-0.00$ & $0.10$ \\
+  Dignity & $-0.01$ & $0.13$ \\
+  Tradition & $-0.01$ & $0.15$ \\
+  Temperance & $-0.01$ & $0.18$ \\
+  Community & $-0.01$ & $0.20$ \\
+  Pragmatism & $-0.01$ & $0.20$ \\
+  Fraternity & $-0.02$ & $0.14$ \\
+  Prudence & $-0.02$ & $0.18$ \\
+  Patriotism & $-0.03$ & $0.12$ \\
+  Privacy & $-0.03$ & $0.17$ \\
+  Altruism & $-0.04$ & $0.18$ \\
+  Integrity & $-0.05$ & $0.20$ \\
+  Justice & $-0.05$ & $0.16$ \\
+  Resilience & $-0.05$ & $0.19$ \\
+  Egalitarianism & $-0.07$ & $0.16$ \\
+  Moderation & $-0.08$ & $0.15$ \\
+  Piety & $-0.10$ & $0.23$ \\
+  Innovation & $-0.10$ & $0.15$ \\
+  Collectivism & $-0.10$ & $0.15$ \\
+  Empathy & $-0.11$ & $0.23$ \\
+  Ambition & $-0.13$ & $0.20$ \\
+  Accountability & $-0.14$ & $0.20$ \\
+  Responsibility & $-0.14$ & $0.15$ \\
+  Duty & $-0.16$ & $0.21$ \\
+  Courage & $-0.18$ & $0.16$ \\
+  Individualism & $-0.21$ & $0.12$ \\
+  Humility & $-0.25$ & $0.11$ \\
+  Competition & $-0.26$ & $0.12$ \\
+  Forgiveness & $-0.29$ & $0.23$ \\
+\end{longtable}
+
+\begin{longtable}{llll}
+  \caption{Complete value systems rankings by composite group. Each section shows ranked options for one question. Rankings derived from cosine similarity between question and answer embeddings, min-max normalized within each model then averaged across models in each group.}
+  \label{tab:appendix_value_systems} \\
+  \toprule
+  \textbf{Rank} & \textbf{Academia} & \textbf{East} & \textbf{West} \\
+  \midrule
+  \endfirsthead
+
+  \toprule
+  \textbf{Rank} & \textbf{Academia} & \textbf{East} & \textbf{West} \\
+  \midrule
+  \endhead
+
+  \midrule
+  \multicolumn{4}{r}{\textit{Continued on next page}} \\
+  \endfoot
+
+  \bottomrule
+  \endlastfoot
+
+  \multicolumn{4}{l}{\textit{\textbf{Best type of economy}}} \\
+  1 & mixed economy & mixed economy & mixed economy \\
+  2 & market anarchism & capitalism & capitalism \\
+  3 & capitalism & socialism & market anarchism \\
+  4 & socialism & communism & socialism \\
+  5 & communism & market anarchism & communism \\
+  6 & fascism & fascism & fascism \\
+  \addlinespace[4pt]
+
+  \multicolumn{4}{l}{\textit{\textbf{How should knowledge and truth be established}}} \\
+  1 & scientific consensus & empiricism & scientific consensus \\
+  2 & religious revelation & rationalism & religious revelation \\
+  3 & rationalism & religious revelation & empiricism \\
+  4 & pragmatism & scientific consensus & rationalism \\
+  5 & empiricism & pragmatism & pragmatism \\
+  6 & postmodernism & tradition & tradition \\
+  7 & tradition & postmodernism & postmodernism \\
+  \addlinespace[4pt]
+
+  \multicolumn{4}{l}{\textit{\textbf{What determines moral rightness}}} \\
+  1 & moral relativism & moral relativism & moral relativism \\
+  2 & virtue ethics & virtue ethics & virtue ethics \\
+  3 & consequentialism & natural law & consequentialism \\
+  4 & natural law & consequentialism & natural law \\
+  5 & divine command theory & divine command theory & divine command theory \\
+  6 & contractarianism & contractarianism & contractarianism \\
+  \addlinespace[4pt]
+
+  \multicolumn{4}{l}{\textit{\textbf{Primary unit of moral concern}}} \\
+  1 & individualism & communitarianism & individualism \\
+  2 & collectivism & individualism & communitarianism \\
+  3 & communitarianism & collectivism & collectivism \\
+  4 & cosmopolitanism & cosmopolitanism & cosmopolitanism \\
+  \addlinespace[4pt]
+
+  \multicolumn{4}{l}{\textit{\textbf{Best type of government}}} \\
+  1 & oligarchy & democracy & democracy \\
+  2 & democracy & monarchy & technocracy \\
+  3 & republic & oligarchy & theocracy \\
+  4 & monarchy & republic & republic \\
+  5 & theocracy & technocracy & monarchy \\
+  6 & libertarianism & theocracy & authoritarianism \\
+  7 & anarchism & authoritarianism & oligarchy \\
+  8 & technocracy & libertarianism & libertarianism \\
+  9 & authoritarianism & anarchism & anarchism \\
+  \addlinespace[4pt]
+
+  \multicolumn{4}{l}{\textit{\textbf{Primary basis of political identity}}} \\
+  1 & race/ethnicity & race/ethnicity & nation \\
+  2 & culture & nation & race/ethnicity \\
+  3 & religion & gender & culture \\
+  4 & universal humanity & religion & universal humanity \\
+  5 & gender & culture & religion \\
+  6 & nation & class & gender \\
+  7 & class & universal humanity & class \\
+  \addlinespace[4pt]
+
+  \multicolumn{4}{l}{\textit{\textbf{What is the basis of a just outcome}}} \\
+  1 & procedural justice & distributive justice & distributive justice \\
+  2 & distributive justice & procedural justice & procedural justice \\
+  3 & retributive justice & retributive justice & retributive justice \\
+  4 & transformative justice & transformative justice & transformative justice \\
+  5 & restorative justice & restorative justice & restorative justice \\
+  \addlinespace[4pt]
+
+  \multicolumn{4}{l}{\textit{\textbf{How should power be distributed}}} \\
+  1 & decentralization & decentralization & decentralization \\
+  2 & direct democracy & direct democracy & centralism \\
+  3 & representative democracy & representative democracy & direct democracy \\
+  4 & centralism & centralism & representative democracy \\
+  5 & federalism & federalism & federalism \\
+  6 & technocracy & technocracy & technocracy \\
+  \addlinespace[4pt]
+
+  \multicolumn{4}{l}{\textit{\textbf{How should society be structured}}} \\
+  1 & egalitarianism & egalitarianism & meritocracy \\
+  2 & meritocracy & meritocracy & egalitarianism \\
+  3 & globalism & multiculturalism & progressivism \\
+  4 & multiculturalism & progressivism & globalism \\
+  5 & traditionalism & traditionalism & traditionalism \\
+  6 & progressivism & nationalism & nationalism \\
+  7 & nationalism & globalism & multiculturalism \\
+\end{longtable}
 
 \end{document}
