@@ -17,9 +17,9 @@
 
   import config from "../../config.json";
 
-  const DOMAIN_MAX = config.scale.sentiment.max;
+  const DOMAIN_MAX = config.scale.max;
   const DEFAULT_DOMAIN_X: [number, number] = [-DOMAIN_MAX, DOMAIN_MAX];
-  const DEFAULT_DOMAIN_Y: [number, number] = [-0.1, 0.35];
+  const DEFAULT_DOMAIN_Y: [number, number] = [0, 0.65];
 
   const PLOT_THEME = {
     defaultHeight: 800,

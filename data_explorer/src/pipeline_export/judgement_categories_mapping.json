@@ -1,37 +1,37 @@
 {
   "composite_judgement_average": {
     "name": "composite_judgement_average",
-    "positiveTerm": "composite_positive",
-    "negativeTerm": "composite_negative"
+    "positive_term": "composite_positive",
+    "negative_term": "composite_negative"
   },
   "judgement": {
     "name": "judgement",
-    "positiveTerm": "good",
-    "negativeTerm": "evil"
+    "positive_term": "good",
+    "negative_term": "evil"
   },
   "judgement_complex": {
     "name": "judgement_complex",
-    "positiveTerm": "virtuous",
-    "negativeTerm": "wicked"
+    "positive_term": "virtuous",
+    "negative_term": "wicked"
   },
   "judgement_feasibility": {
     "name": "judgement_feasibility",
-    "positiveTerm": "feasible",
-    "negativeTerm": "unfeasible"
+    "positive_term": "feasible",
+    "negative_term": "unfeasible"
   },
   "judgement_idealism": {
     "name": "judgement_idealism",
-    "positiveTerm": "ideal",
-    "negativeTerm": "flawed"
+    "positive_term": "ideal",
+    "negative_term": "flawed"
   },
   "judgement_safety": {
     "name": "judgement_safety",
-    "positiveTerm": "safe",
-    "negativeTerm": "dangerous"
+    "positive_term": "safe",
+    "negative_term": "dangerous"
   },
   "judgement_superiority": {
     "name": "judgement_superiority",
-    "positiveTerm": "superior",
-    "negativeTerm": "inferior"
+    "positive_term": "superior",
+    "negative_term": "inferior"
   }
 }

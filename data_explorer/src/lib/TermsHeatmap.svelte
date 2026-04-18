@@ -5,7 +5,8 @@
 
   import config from "../config.json";
   import { createContinuousSentimentScale as createColorScale } from "./plot";
-  import { changeSort, formatPercent } from "./utils";
+  import { changeSort } from "./utils";
+  import { getDisplayScore } from "./ui/ui_utils";
 
   import ExportModal from "./ui/ExportModal.svelte";
   import MethodologyModal from "./ui/MethodologyModal.svelte";
@@ -141,7 +142,7 @@
                   style="background-color: {colorScale(row[model.model_id])};"
                 >
                   <span class="show-on-parent-hover">
-                    {formatPercent(row[model.model_id], config.scale.offset)}
+                    {getDisplayScore(row[model.model_id])}
                   </span>
                 </div>
               </td>

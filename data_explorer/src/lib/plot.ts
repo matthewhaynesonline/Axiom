@@ -8,7 +8,7 @@ import {
   getThemeNeutralColorValue,
 } from "./utils";
 
-const { min, max } = config.scale.sentiment;
+const { min, max } = config.scale;
 
 const SENTIMENT_MID = (min + max) / 2;
 

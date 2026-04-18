@@ -27,8 +27,8 @@
       : null,
   );
 
-  let positiveTerm = $derived(judgementCategoryMapping?.positiveTerm ?? null);
-  let negativeTerm = $derived(judgementCategoryMapping?.negativeTerm ?? null);
+  let positiveTerm = $derived(judgementCategoryMapping?.positive_term ?? null);
+  let negativeTerm = $derived(judgementCategoryMapping?.negative_term ?? null);
 
   let consensusDt = $derived.by(() => {
     if (!active || !dt || !positiveTerm || !negativeTerm) return null;

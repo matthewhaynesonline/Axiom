@@ -1,16 +1,7 @@
 {
-  "files": {
-    "modelsMeta": "enabled_models.csv",
-    "termSentiment": "axiom_term_sentiment.arrow",
-    "valueSystemRankings": "value_system_rankings.arrow"
-  },
   "scale": {
-    "sentiment": {
-      "min": -0.5,
-      "max": 0.5
-    },
-    "offset": 0.5,
-    "normalizedScaleScoreMax": 1.0
+    "min": -1.0,
+    "max": 1.0
   },
   "theme": {
     "numDecimalsDisplay": 2,

@@ -199,7 +199,7 @@
   });
 
   async function loadModelsMeta() {
-    const response = await fetch(config.files.modelsMeta);
+    const response = await fetch("enabled_models.csv");
     const csvText = await response.text();
 
     modelsMeta = aq
@@ -219,9 +219,9 @@
   }
 
   async function processData() {
-    termSentimentDt = await loadDtFromArrow(config.files.termSentiment);
+    termSentimentDt = await loadDtFromArrow("axiom_term_sentiment.arrow");
     valueSystemRankingsDt = await loadDtFromArrow(
-      config.files.valueSystemRankings,
+      "value_system_rankings.arrow",
     );
 
     valueSystemRankingsDt = valueSystemRankingsDt

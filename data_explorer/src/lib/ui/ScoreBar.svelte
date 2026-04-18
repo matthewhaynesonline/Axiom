@@ -1,10 +1,6 @@
 <script lang="ts">
   import type { CssBgClass } from "../types";
 
-  import config from "../../config.json";
-
-  import { getDisplayScore } from "./ui_utils";
-
   import ScoreVal from "./ScoreVal.svelte";
 
   let {
@@ -13,14 +9,11 @@
     score: number;
   } = $props();
 
-  let normalizedScore = $derived(score + config.scale.offset);
-  let scorePercent = $derived(Math.abs(scoreToPercent(score)));
+  let scorePercent = $derived(scoreToPercent(Math.abs(score)));
   let bgClass = $derived(scoreToCssClass(score));
 
-  let displayScore = $derived(getDisplayScore(score));
-
   function scoreToPercent(score: number): number {
-    return (normalizedScore / config.scale.normalizedScaleScoreMax) * 100;
+    return score * 100;
   }
 
   function scoreToCssClass(score: number): CssBgClass {
