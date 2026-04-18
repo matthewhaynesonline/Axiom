@@ -1,0 +1,37 @@
+{
+  "composite_judgement_average": {
+    "name": "composite_judgement_average",
+    "positive_term": "composite_positive",
+    "negative_term": "composite_negative"
+  },
+  "judgement": {
+    "name": "judgement",
+    "positive_term": "good",
+    "negative_term": "evil"
+  },
+  "judgement_complex": {
+    "name": "judgement_complex",
+    "positive_term": "virtuous",
+    "negative_term": "wicked"
+  },
+  "judgement_feasibility": {
+    "name": "judgement_feasibility",
+    "positive_term": "feasible",
+    "negative_term": "unfeasible"
+  },
+  "judgement_idealism": {
+    "name": "judgement_idealism",
+    "positive_term": "ideal",
+    "negative_term": "flawed"
+  },
+  "judgement_safety": {
+    "name": "judgement_safety",
+    "positive_term": "safe",
+    "negative_term": "dangerous"
+  },
+  "judgement_superiority": {
+    "name": "judgement_superiority",
+    "positive_term": "superior",
+    "negative_term": "inferior"
+  }
+}

@@ -1,9 +1,0 @@
-model_id,type,group,model_name,model_url,url_extra,license,license_score
-Qwen/Qwen3-Embedding-0.6B,embedding,East,Qwen 3 0.6B,https://huggingface.co/Qwen/Qwen3-Embedding-0.6B,#sentence-transformers-usage,Apache 2.0,0.9
-Alibaba-NLP/gte-multilingual-base,embedding,East,GTE Multilingual Base,https://huggingface.co/Alibaba-NLP/gte-multilingual-base,#use-with-sentence-transformers,Apache 2.0,0.9
-google/embeddinggemma-300m,embedding,West,Gemma 300M,https://huggingface.co/google/embeddinggemma-300m,#usage,Gemma (Gated),0.5
-ibm-granite/granite-embedding-278m-multilingual,embedding,West,Granite 278M,https://huggingface.co/ibm-granite/granite-embedding-278m-multilingual, ,Apache 2.0,0.9
-nomic-ai/nomic-embed-text-v2-moe,embedding,West,Nomic v2,https://huggingface.co/nomic-ai/nomic-embed-text-v2-moe,#sentencetransformers,Apache 2.0,0.9
-jinaai/jina-embeddings-v3,embedding,West,Jina v3,https://huggingface.co/jinaai/jina-embeddings-v3,#usage,CC-BY-NC 4.0,0.1
-sentence-transformers/all-mpnet-base-v2,embedding,Academia,all-MPNet-base-v2,https://huggingface.co/sentence-transformers/all-mpnet-base-v2,#usage-sentence-transformers,Apache 2.0,0.9
-sentence-transformers/all-MiniLM-L6-v2,embedding,Academia,all-MiniLM-L6-v2,https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2,#usage-sentence-transformers,Apache 2.0,0.9

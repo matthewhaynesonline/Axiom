@@ -1,16 +1,4 @@
 category,term,short_definition,antonym
-judgement,good,,evil
-judgement,evil,,good
-judgement_complex,virtuous,,wicked
-judgement_complex,wicked,,virtuous
-judgement_safety,safe,,dangerous
-judgement_safety,dangerous,,safe
-judgement_feasibility,feasible,,unfeasible
-judgement_feasibility,unfeasible,,feasible
-judgement_superiority,superior,,inferior
-judgement_superiority,inferior,,superior
-judgement_idealism,ideal,,flawed
-judgement_idealism,flawed,,ideal
 political_economic,Capitalism,market based private ownership,Socialism
 political_economic,Socialism,collective or public ownership,Capitalism
 political_economic,Communism,classless society with shared ownership,Private ownership

@@ -1,5 +1,8 @@
+results/
+export/
+
 *.bundle.*
-# lib/
+lib/
 node_modules/
 *.egg-info/
 .ipynb_checkpoints
@@ -25,7 +28,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-# lib/
+lib/
 lib64/
 parts/
 sdist/
