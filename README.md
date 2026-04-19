@@ -8,7 +8,7 @@ Standard benchmarks (like [MTEB](https://huggingface.co/spaces/mteb/leaderboard)
 
 https://youtu.be/xDg8kd9nopQ
 
-## Example App
+## Data Explorer App
 
 https://matthewhaynesonline.github.io/Axiom/
 
@@ -16,7 +16,7 @@ https://matthewhaynesonline.github.io/Axiom/
 
 This codebase serves as the technical foundation for the following research and writing:
 
-- **Paper:** _Do Embedding Models Have a Moral Compass?_ ([`paper.pdf`](/paper/paper.pdf))
+- **Paper:** [_Do Embedding Models Have a Moral Compass?_ `paper.pdf`](/paper/paper.pdf)
 - **Interactive Essay:** [Do Models Dream of Fascist Sheep?](https://blog.studiohaynes.com/go/axiom)
 - **Hugging Face Collection:** [matthewhaynesonline/axiom](https://huggingface.co/collections/matthewhaynesonline/axiom)
 
