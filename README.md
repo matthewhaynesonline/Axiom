@@ -10,7 +10,7 @@ https://youtu.be/xDg8kd9nopQ
 
 ## Example App
 
-https://matthewhaynesonline.github.io/axiom/
+https://matthewhaynesonline.github.io/Axiom/
 
 ## Companion Materials
 
