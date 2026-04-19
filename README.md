@@ -4,12 +4,20 @@
 
 Standard benchmarks (like [MTEB](https://huggingface.co/spaces/mteb/leaderboard)) evaluate retrieval performance but fail to capture structural ideological biases. Axiom bridges this gap by using semantic axis projection to evaluate how models from different geographic and institutional origins score political, economic and value-laden concepts.
 
-### Companion Materials
+## Video guide
+
+https://youtu.be/xDg8kd9nopQ
+
+## Example App
+
+https://matthewhaynesonline.github.io/axiom/
+
+## Companion Materials
 
 This codebase serves as the technical foundation for the following research and writing:
 
 - **Paper:** _Do Embedding Models Have a Moral Compass?_ ([`paper.pdf`](/paper/paper.pdf))
-- **Interactive Essay:** [Do Models Dream of Fascist Sheep?](https://blog.studiohaynes.com/essays/do-models-dream.html)
+- **Interactive Essay:** [Do Models Dream of Fascist Sheep?](https://blog.studiohaynes.com/axiom)
 
 ## Components
 
