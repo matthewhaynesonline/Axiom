@@ -1,0 +1,54 @@
+name: Deploy to Hugging Face Spaces
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "data_explorer/**"
+  workflow_dispatch:
+
+env:
+  APP_DIR: data_explorer
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./${{ env.APP_DIR }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          rm -f package-lock.json
+          npm install
+
+      - name: Build
+        env:
+          DEPLOY_TARGET: huggingface
+        run: npm run build
+
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          cd dist
+
+          git config --global user.email "ci@github-actions"
+          git config --global user.name "GitHub Actions"
+
+          git init
+          git add .
+          git commit -m "Deploy from GitHub Actions - ${GITHUB_SHA::7}"
+
+          git push --force \
+            https://your-hf-username:${HF_TOKEN}@huggingface.co/spaces/matthewhaynesonline/axiom-explorer \
+            HEAD:main
