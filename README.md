@@ -18,6 +18,7 @@ This codebase serves as the technical foundation for the following research and 
 
 - **Paper:** _Do Embedding Models Have a Moral Compass?_ ([`paper.pdf`](/paper/paper.pdf))
 - **Interactive Essay:** [Do Models Dream of Fascist Sheep?](https://blog.studiohaynes.com/go/axiom)
+- **Hugging Face Collection:** [matthewhaynesonline/axiom](https://huggingface.co/collections/matthewhaynesonline/axiom)
 
 ## Components
 
