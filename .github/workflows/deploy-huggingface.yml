@@ -40,15 +40,18 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          cd dist
+          pip install huggingface_hub[hf_xet] --quiet
 
-          git config --global user.email "ci@github-actions"
-          git config --global user.name "GitHub Actions"
+          python - <<'EOF'
+          import os
+          from huggingface_hub import HfApi
 
-          git init
-          git add .
-          git commit -m "Deploy from GitHub Actions - ${GITHUB_SHA::7}"
+          api = HfApi(token=os.environ["HF_TOKEN"])
 
-          git push --force \
-            https://your-hf-username:${HF_TOKEN}@huggingface.co/spaces/matthewhaynesonline/axiom-explorer \
-            HEAD:main
+          api.upload_folder(
+              folder_path="dist",
+              repo_id="matthewhaynesonline/axiom-explorer",
+              repo_type="space",
+              commit_message=f"Deploy from GitHub Actions - {os.environ.get('GITHUB_SHA', 'unknown')[:7]}",
+          )
+          EOF
